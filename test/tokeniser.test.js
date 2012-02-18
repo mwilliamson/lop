@@ -52,6 +52,14 @@ exports.adjacentSymbolsAreTokenisedAsSeparateSymbols =
         tokens.symbol(")", tokeniser.stringSource("()", 1, 2)),
         tokens.end(tokeniser.stringSource("()", 2, 2))
     ]);
+    
+exports.whitespaceIsNotRequiredBetweenIdentifierAndSymbol =
+    stringIsTokenisedTo("blah()", [
+        tokens.identifier("blah", tokeniser.stringSource("blah()", 0, 4)),
+        tokens.symbol("(", tokeniser.stringSource("blah()", 4, 5)),
+        tokens.symbol(")", tokeniser.stringSource("blah()", 5, 6)),
+        tokens.end(tokeniser.stringSource("blah()", 6, 6))
+    ]);
 
 function stringIsTokenisedTo(string, expected) {
     return function(test) {
