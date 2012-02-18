@@ -65,10 +65,17 @@ exports.firstOfFailsIfNoParsersMatch = function(test) {
 exports.thenReturnsFailureIfOriginalResultIsFailure = function(test) {
     var parser = rules.then(rules.keyword("true"), function() { return true; });
     var result = parseString(parser, "blah");
-    assertIsFailureWithRemaining(test, result, [
-        tokens.identifier("blah", stringSource("blah", 0, 4)),
-        tokens.end(stringSource("blah", 4, 4))
-    ]);
+    assertIsFailure(test, result, {
+        remaining:[
+            tokens.identifier("blah", stringSource("blah", 0, 4)),
+            tokens.end(stringSource("blah", 4, 4))
+        ],
+        errors: [errors.error({
+            expected: "keyword \"true\"",
+            actual: "identifier \"blah\"",
+            location: stringSource("blah", 0, 4)
+        })]
+    });
     test.done();
 };
 
@@ -89,20 +96,34 @@ exports.sequenceSucceedsWithValuesFromSubParsers = function(test) {
 exports.sequenceFailIfSubParserFails = function(test) {
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
     var result = parseString(parser, "(");
-    assertIsFailureWithRemaining(test, result, [
-        tokens.symbol("(", stringSource("(", 0, 1)),
-        tokens.end(stringSource("(", 1, 1))
-    ]);
+    assertIsFailure(test, result, {
+        remaining:[
+            tokens.symbol("(", stringSource("(", 0, 1)),
+            tokens.end(stringSource("(", 1, 1))
+        ],
+        errors: [errors.error({
+            expected: "symbol \")\"",
+            actual: "end",
+            location: stringSource("(", 1, 1)
+        })]
+    });
     test.done();
 };
 
 exports.sequenceFailIfSubParserFailsAndFinalParserSucceeds = function(test) {
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
     var result = parseString(parser, ")");
-    assertIsFailureWithRemaining(test, result, [
-        tokens.symbol(")", stringSource(")", 0, 1)),
-        tokens.end(stringSource(")", 1, 1))
-    ]);
+    assertIsFailure(test, result, {
+        remaining:[
+            tokens.symbol(")", stringSource(")", 0, 1)),
+            tokens.end(stringSource(")", 1, 1))
+        ],
+        errors: [errors.error({
+            expected: "symbol \"(\"",
+            actual: "symbol \")\"",
+            location: stringSource(")", 0, 1)
+        })]
+    });
     test.done();
 };
 
