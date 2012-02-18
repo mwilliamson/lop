@@ -2,7 +2,7 @@ var tokeniser = require("../lib/tokeniser");
 var tokens = tokeniser.tokens;
 
 var keywords = ["true", "false"];
-var symbols = ["(", ")"];
+var symbols = ["(", ")", "=>"];
 
 exports.emptyStringIsTokenisedToEndToken =
     stringIsTokenisedTo("", [tokens.end(tokeniser.stringSource("", 0, 0))]);
@@ -51,6 +51,12 @@ exports.adjacentSymbolsAreTokenisedAsSeparateSymbols =
         tokens.symbol("(", tokeniser.stringSource("()", 0, 1)),
         tokens.symbol(")", tokeniser.stringSource("()", 1, 2)),
         tokens.end(tokeniser.stringSource("()", 2, 2))
+    ]);
+    
+exports.symbolsCanBeMultipleCharacters =
+    stringIsTokenisedTo("=>", [
+        tokens.symbol("=>", tokeniser.stringSource("=>", 0, 2)),
+        tokens.end(tokeniser.stringSource("=>", 2, 2))
     ]);
     
 exports.whitespaceIsNotRequiredBetweenIdentifierAndSymbol =
