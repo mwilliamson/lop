@@ -1,0 +1,10 @@
+{
+    "name": "lop",
+    "version": "0.1.0",
+    "dependencies": {
+        "underscore": "latest"
+    },
+    "devDependencies": {
+        "nodeunit": "latest"
+    }
+}
