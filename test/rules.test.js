@@ -2,9 +2,11 @@ var rules = require("../lib/rules");
 var tokeniser = require("../lib/tokeniser");
 var testing = require("../lib/testing");
 var TokenIterator = require("../lib/TokenIterator");
+var errors = require("../lib/errors");
 var tokens = tokeniser.tokens;
 var stringSource = tokeniser.stringSource;
 var assertIsSuccessWithValue = testing.assertIsSuccessWithValue;
+var assertIsFailure = testing.assertIsFailure;
 var assertIsFailureWithRemaining = testing.assertIsFailureWithRemaining;
 
 exports.keywordConsumesCharactersOfKeywordIfPresent = function(test) {
@@ -17,10 +19,17 @@ exports.keywordConsumesCharactersOfKeywordIfPresent = function(test) {
 exports.parsingKeywordFailsIfStringIsNotKeyword = function(test) {
     var parser = rules.keyword("true");
     var result = parseString(parser, "blah");
-    assertIsFailureWithRemaining(test, result, [
-        tokens.identifier("blah", stringSource("blah", 0, 4)),
-        tokens.end(stringSource("blah", 4, 4))
-    ]);
+    assertIsFailure(test, result, {
+        remaining: [
+            tokens.identifier("blah", stringSource("blah", 0, 4)),
+            tokens.end(stringSource("blah", 4, 4))
+        ],
+        errors: [errors.error({
+            expected: "keyword \"true\"",
+            actual: "identifier \"blah\"",
+            location: stringSource("blah", 0, 4)
+        })]
+    });
     test.done();
 };
 
