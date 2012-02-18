@@ -69,6 +69,26 @@ exports.sequenceSucceedsWithValuesFromSubParsers = function(test) {
     test.done();
 };
 
+exports.sequenceFailIfSubParserFails = function(test) {
+    var parser = parsing.sequence(parsing.symbol("("), parsing.symbol(")"));
+    var result = parseString(parser, "(");
+    assertIsFailureWithRemaining(test, result, [
+        tokens.symbol("(", stringSource("(", 0, 1)),
+        tokens.end(stringSource("(", 1, 1))
+    ]);
+    test.done();
+};
+
+exports.sequenceFailIfSubParserFailsAndFinalParserSucceeds = function(test) {
+    var parser = parsing.sequence(parsing.symbol("("), parsing.symbol(")"));
+    var result = parseString(parser, ")");
+    assertIsFailureWithRemaining(test, result, [
+        tokens.symbol(")", stringSource(")", 0, 1)),
+        tokens.end(stringSource(")", 1, 1))
+    ]);
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")"];
