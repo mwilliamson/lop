@@ -48,10 +48,17 @@ exports.firstOfFailsIfNoParsersMatch = function(test) {
     var trueParser = rules.keyword("true");
     var falseParser = rules.keyword("false");
     var result = parseString(rules.firstOf("Boolean", trueParser, falseParser), "blah");
-    assertIsFailureWithRemaining(test, result, [
-        tokens.identifier("blah", stringSource("blah", 0, 4)),
-        tokens.end(stringSource("blah", 4, 4))
-    ]);
+    assertIsFailure(test, result, {
+        remaining:[
+            tokens.identifier("blah", stringSource("blah", 0, 4)),
+            tokens.end(stringSource("blah", 4, 4))
+        ],
+        errors: [errors.error({
+            expected: "Boolean",
+            actual: "identifier \"blah\"",
+            location: stringSource("blah", 0, 4)
+        })]
+    });
     test.done();
 };
 
