@@ -1,6 +1,6 @@
 {
     "name": "lop",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "dependencies": {
         "underscore": "latest",
         "options": "git://github.com/mwilliamson/node-options.git"

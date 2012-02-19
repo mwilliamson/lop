@@ -157,6 +157,24 @@ exports.canPullSingleValueOutOfCapturedValuesUsingExtract = function(test) {
     test.done();
 };
 
+exports.canApplyValuesFromSequenceToFunction = function(test) {
+    var firstName = rules.capture(rules.identifier(), "firstName");
+    var secondName = rules.capture(rules.identifier(), "secondName");
+    var parser = rules.then(
+        rules.sequence(
+            secondName,
+            rules.symbol(","),
+            firstName
+        ),
+        rules.sequence.applyValues(function(firstName, secondName) {
+            return {first: firstName, second: secondName};
+        }, firstName, secondName)
+    );
+    var result = parseString(parser, "Bobertson,Bob");
+    assertIsSuccessWithValue(test, result, {first: "Bob", second: "Bobertson"});
+    test.done();
+};
+
 exports.exceptionIfTryingToReadAValueThatHasntBeenCaptured = function(test) {
     var name = rules.capture(rules.identifier(), "name");
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
