@@ -24,3 +24,19 @@ exports.canParseUsingParser = function(test) {
     
     test.done();
 };
+
+exports.canIgnoreWhitespace = function(test) {
+    var keywords = ["true", "false"];
+    var symbols = ["(", ")", "!"];
+    var options = {
+        keywords: keywords,
+        symbols: symbols,
+        ignoreWhitespace: true
+    };
+    var parser = new Parser(options);
+    var rule = rules.sequence(rules.symbol("!"), rules.symbol("!"));
+    var result = parser.parseString(rule, " ! ! ");
+    
+    testing.assertIsSuccess(test, result);
+    test.done();
+};
