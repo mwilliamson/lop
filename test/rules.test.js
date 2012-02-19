@@ -5,6 +5,7 @@ var TokenIterator = require("../lib/TokenIterator");
 var errors = require("../lib/errors");
 var tokens = tokeniser.tokens;
 var stringSource = tokeniser.stringSource;
+var assertIsSuccess = testing.assertIsSuccess;
 var assertIsSuccessWithValue = testing.assertIsSuccessWithValue;
 var assertIsFailure = testing.assertIsFailure;
 var assertIsFailureWithRemaining = testing.assertIsFailureWithRemaining;
@@ -93,10 +94,10 @@ exports.thenMapsOverValueIfOriginalResultIsSuccess = function(test) {
     test.done();
 };
 
-exports.sequenceSucceedsWithValuesFromSubParsers = function(test) {
+exports.sequenceSucceedsIfSubParsersCanBeAppliedInOrder = function(test) {
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
     var result = parseString(parser, "()");
-    assertIsSuccessWithValue(test, result, ["(", ")"]);
+    assertIsSuccess(test, result);
     test.done();
 };
 
@@ -131,6 +132,14 @@ exports.sequenceFailIfSubParserFailsAndFinalParserSucceeds = function(test) {
             location: stringSource(")", 0, 1)
         })]
     });
+    test.done();
+};
+
+exports.sequenceReturnsMapOfCapturedValues = function(test) {
+    var name = rules.capture(rules.identifier(), "name");
+    var parser = rules.sequence(rules.symbol("("), name, rules.symbol(")"));
+    var result = parseString(parser, "(bob)");
+    assertIsSuccessWithValue(test, result, {name: "bob"});
     test.done();
 };
 

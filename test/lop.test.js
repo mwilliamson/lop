@@ -11,14 +11,15 @@ exports.canParseUsingParser = function(test) {
         symbols: symbols
     };
     var parser = new Parser(options);
+    var name = rules.capture(rules.identifier(), "name");
     var rule = rules.sequence(
         rules.symbol("!"),
-        rules.keyword("true")
+        name
     );
     
-    var result = parser.parseString(rule, "!true");
+    var result = parser.parseString(rule, "!blah");
     
-    testing.assertIsSuccessWithValue(test, result, ["!", "true"]);
+    testing.assertIsSuccessWithValue(test, result, {name: "blah"});
     
     test.done();
 };
