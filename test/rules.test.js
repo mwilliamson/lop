@@ -146,6 +146,17 @@ exports.sequenceReturnsMapOfCapturedValues = function(test) {
     test.done();
 };
 
+exports.canPullSingleValueOutOfCapturedValuesUsingExtract = function(test) {
+    var name = rules.capture(rules.identifier(), "name");
+    var parser = rules.then(
+        rules.sequence(rules.symbol("("), name, rules.symbol(")")),
+        rules.sequence.extract(name)
+    );
+    var result = parseString(parser, "(bob)");
+    assertIsSuccessWithValue(test, result, "bob");
+    test.done();
+};
+
 exports.exceptionIfTryingToReadAValueThatHasntBeenCaptured = function(test) {
     var name = rules.capture(rules.identifier(), "name");
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
