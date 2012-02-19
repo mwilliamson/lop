@@ -19,7 +19,8 @@ exports.canParseUsingParser = function(test) {
     
     var result = parser.parseString(rule, "!blah");
     
-    testing.assertIsSuccessWithValue(test, result, {name: "blah"});
+    testing.assertIsSuccess(test, result);
+    test.deepEqual(result.value().get(name), "blah");
     
     test.done();
 };

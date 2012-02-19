@@ -139,7 +139,8 @@ exports.sequenceReturnsMapOfCapturedValues = function(test) {
     var name = rules.capture(rules.identifier(), "name");
     var parser = rules.sequence(rules.symbol("("), name, rules.symbol(")"));
     var result = parseString(parser, "(bob)");
-    assertIsSuccessWithValue(test, result, {name: "bob"});
+    assertIsSuccess(test, result);
+    test.deepEqual(result.value().get(name), "bob");
     test.done();
 };
 
