@@ -11,7 +11,7 @@ var assertIsSuccess = testing.assertIsSuccess;
 var assertIsSuccessWithValue = testing.assertIsSuccessWithValue;
 var assertIsFailure = testing.assertIsFailure;
 var assertIsFailureWithRemaining = testing.assertIsFailureWithRemaining;
-var assertIsNoMatch = testing.assertIsNoMatch;
+var assertIsError = testing.assertIsError;
 
 exports.keywordConsumesCharactersOfKeywordIfPresent = function(test) {
     var parser = rules.keyword("true");
@@ -146,21 +146,25 @@ exports.sequenceReturnsMapOfCapturedValues = function(test) {
     test.done();
 };
 
-exports.guardedRulesBehaveAsUnguardedRulesIfTheyMatch = function(test) {
-    var parser = rules.sequence(rules.guard(rules.symbol("(")), rules.identifier(), rules.symbol(")"));
-    var result = parseString(parser, "(bob)");
-    assertIsSuccess(test, result);
+exports.failureInSubRuleInSequenceBeforeCutCausesSequenceToFail = function(test) {
+    var parser = rules.sequence(rules.symbol("("), rules.cut(), rules.identifier(), rules.symbol(")"));
+    var result = parseString(parser, "bob");
+    assertIsFailure(test, result);
     test.done();
 };
 
-exports.guardedRulesCauseSequenceNotToMatchWithoutFailingIfNotMatched = function(test) {
-    var parser = rules.sequence(rules.guard(rules.symbol("(")), rules.identifier(), rules.symbol(")"));
-    var result = parseString(parser, "bob");
-    assertIsNoMatch(test, result, {
-        remaining: [
-            tokens.identifier("bob", stringSource("bob", 0, 3)),
-            tokens.end(stringSource("bob", 3, 3))
-        ]
+exports.failureInSubRuleInSequenceAfterCutCausesFatal = function(test) {
+    var parser = rules.sequence(rules.symbol("("), rules.cut(), rules.identifier(), rules.symbol(")"));
+    var result = parseString(parser, "(");
+    assertIsError(test, result, {
+        remaining:[
+            tokens.end(stringSource("(", 1, 1))
+        ],
+        errors: [errors.error({
+            expected: "identifier",
+            actual: "end",
+            location: stringSource("(", 0, 1)
+        })]
     });
     test.done();
 };
