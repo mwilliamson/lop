@@ -149,7 +149,12 @@ exports.exceptionIfTryingToReadAValueThatHasntBeenCaptured = function(test) {
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
     var result = parseString(parser, "()");
     assertIsSuccess(test, result);
-    test.throws(function() {result.value().get(name)});
+    try {
+        result.value().get(name);
+        test.ok(false);
+    } catch (error) {
+        test.equal(error.message, "No value for capture \"name\"");
+    }
     test.done();
 };
 
