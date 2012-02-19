@@ -280,6 +280,18 @@ exports.zeroOrMoreWithSeparatorParsesMultipleInstanceOfRuleAndReturnsArray = fun
     test.done();
 };
 
+exports.zeroOrMoreWithSeparatorDoesNotConsumeFinalSeparatorIfItIsNotFollowedByMainRule = function(test) {
+    var parser = rules.zeroOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
+    var result = parseString(parser, "apple,banana,");
+    assertIsSuccess(test, result, {
+        remaining: [
+            tokens.symbol(",", stringSource("apple,banana,", 12, 13)),
+            tokens.end(stringSource("apple,banana,", 13, 13))
+        ],
+    });
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ","];
