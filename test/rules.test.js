@@ -207,6 +207,13 @@ exports.zeroOrMoreWithSeparatorParsesEmptyStringAndReturnsEmptyArray = function(
     test.done();
 };
 
+exports.zeroOrMoreWithSeparatorParsesSingleInstanceOfRuleAndReturnsSingleElementArray = function(test) {
+    var parser = rules.zeroOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
+    var result = parseString(parser, "blah");
+    assertIsSuccessWithValue(test, result, ["blah"]);
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ","];
