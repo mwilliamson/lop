@@ -214,6 +214,13 @@ exports.zeroOrMoreWithSeparatorParsesSingleInstanceOfRuleAndReturnsSingleElement
     test.done();
 };
 
+exports.zeroOrMoreWithSeparatorParsesMultipleInstanceOfRuleAndReturnsArray = function(test) {
+    var parser = rules.zeroOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
+    var result = parseString(parser, "apple,banana,coconut");
+    assertIsSuccessWithValue(test, result, ["apple", "banana", "coconut"]);
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ","];
