@@ -151,16 +151,29 @@ exports.exceptionIfTryingToReadAValueThatHasntBeenCaptured = function(test) {
     assertIsSuccess(test, result);
     try {
         result.value().get(name);
-        test.ok(false);
+        test.ok(false, "Expected exception");
     } catch (error) {
         test.equal(error.message, "No value for capture \"name\"");
     }
     test.done();
 };
 
+exports.exceptionIfTryingToCaptureValueWithUsedName = function(test) {
+    var firstName = rules.capture(rules.identifier(), "name");
+    var secondName = rules.capture(rules.identifier(), "name");
+    var parser = rules.sequence(secondName, rules.symbol(","), firstName);
+    try {
+        parseString(parser, "Bobertson,Bob")
+        test.ok(false, "Expected exception");
+    } catch (error) {
+        test.equal(error.message, "Cannot add second value for capture \"name\"");
+    }
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
-    var symbols = ["(", ")"];
+    var symbols = ["(", ")", ","];
     var tokens = new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(string);
     return parser(new TokenIterator(tokens));
 }
