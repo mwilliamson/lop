@@ -1,3 +1,5 @@
+var options = require("options");
+
 var rules = require("../lib/rules");
 var tokeniser = require("../lib/tokeniser");
 var testing = require("../lib/testing");
@@ -168,6 +170,22 @@ exports.exceptionIfTryingToCaptureValueWithUsedName = function(test) {
     } catch (error) {
         test.equal(error.message, "Cannot add second value for capture \"name\"");
     }
+    test.done();
+};
+
+exports.optionalRuleDoesNothingIfValueDoesNotMatch = function(test) {
+    var parser = rules.optional(rules.symbol("("));
+    var result = parseString(parser, "");
+    assertIsSuccess(test, result);
+    test.deepEqual(result.value(), options.none);
+    test.done();
+};
+
+exports.optionalRuleConsumesInputIfPossible = function(test) {
+    var parser = rules.optional(rules.symbol("("));
+    var result = parseString(parser, "(");
+    assertIsSuccess(test, result);
+    test.deepEqual(result.value(), options.some("("));
     test.done();
 };
 
