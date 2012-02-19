@@ -73,6 +73,24 @@ exports.firstOfFailsIfNoParsersMatch = function(test) {
     test.done();
 };
 
+exports.firstOfReturnsErrorIfSubRuleReturnsErrorEvenIfLaterRuleSucceeds = function(test) {
+    var trueParser = rules.sequence(rules.cut(), rules.keyword("true"));
+    var falseParser = rules.keyword("false");
+    var result = parseString(rules.firstOf("Boolean", trueParser, falseParser), "false");
+    assertIsError(test, result, {
+        remaining:[
+            tokens.keyword("false", stringSource("false", 0, 5)),
+            tokens.end(stringSource("false", 5, 5))
+        ],
+        errors: [errors.error({
+            expected: "keyword \"true\"",
+            actual: "keyword \"false\"",
+            location: stringSource("false", 0, 5)
+        })]
+    });
+    test.done();
+};
+
 exports.thenReturnsFailureIfOriginalResultIsFailure = function(test) {
     var parser = rules.then(rules.keyword("true"), function() { return true; });
     var result = parseString(parser, "blah");
