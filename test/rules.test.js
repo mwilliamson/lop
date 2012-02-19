@@ -33,6 +33,13 @@ exports.parsingKeywordFailsIfStringIsNotKeyword = function(test) {
     test.done();
 };
 
+exports.identifierConsumesCharactersOfIdentifierIfPresent = function(test) {
+    var parser = rules.identifier();
+    var result = parseString(parser, "blah");
+    assertIsSuccessWithValue(test, result, "blah", stringSource("blah", 0, 4));
+    test.done();
+};
+
 exports.firstSuccessIsReturnedByFirstOf = function(test) {
     var trueParser = rules.keyword("true");
     var falseParser = rules.keyword("false");
