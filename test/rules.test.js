@@ -74,7 +74,7 @@ exports.firstOfFailsIfNoParsersMatch = function(test) {
 };
 
 exports.firstOfReturnsErrorIfSubRuleReturnsErrorEvenIfLaterRuleSucceeds = function(test) {
-    var trueParser = rules.sequence(rules.cut(), rules.keyword("true"));
+    var trueParser = rules.sequence(rules.sequence.cut(), rules.keyword("true"));
     var falseParser = rules.keyword("false");
     var result = parseString(rules.firstOf("Boolean", trueParser, falseParser), "false");
     assertIsError(test, result, {
@@ -165,14 +165,14 @@ exports.sequenceReturnsMapOfCapturedValues = function(test) {
 };
 
 exports.failureInSubRuleInSequenceBeforeCutCausesSequenceToFail = function(test) {
-    var parser = rules.sequence(rules.symbol("("), rules.cut(), rules.identifier(), rules.symbol(")"));
+    var parser = rules.sequence(rules.symbol("("), rules.sequence.cut(), rules.identifier(), rules.symbol(")"));
     var result = parseString(parser, "bob");
     assertIsFailure(test, result);
     test.done();
 };
 
-exports.failureInSubRuleInSequenceAfterCutCausesFatal = function(test) {
-    var parser = rules.sequence(rules.symbol("("), rules.cut(), rules.identifier(), rules.symbol(")"));
+exports.failureInSubRuleInSequenceAfterCutCausesError = function(test) {
+    var parser = rules.sequence(rules.symbol("("), rules.sequence.cut(), rules.identifier(), rules.symbol(")"));
     var result = parseString(parser, "(");
     assertIsError(test, result, {
         remaining:[
