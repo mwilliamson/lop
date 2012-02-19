@@ -144,6 +144,15 @@ exports.sequenceReturnsMapOfCapturedValues = function(test) {
     test.done();
 };
 
+exports.exceptionIfTryingToReadAValueThatHasntBeenCaptured = function(test) {
+    var name = rules.capture(rules.identifier(), "name");
+    var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
+    var result = parseString(parser, "()");
+    assertIsSuccess(test, result);
+    test.throws(function() {result.value().get(name)});
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")"];
