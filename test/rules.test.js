@@ -200,6 +200,13 @@ exports.optionalRuleConsumesInputIfPossible = function(test) {
     test.done();
 };
 
+exports.zeroOrMoreWithSeparatorParsesEmptyStringAndReturnsEmptyArray = function(test) {
+    var parser = rules.zeroOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
+    var result = parseString(parser, "");
+    assertIsSuccessWithValue(test, result, []);
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ","];
