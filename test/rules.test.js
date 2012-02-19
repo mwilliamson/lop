@@ -11,6 +11,7 @@ var assertIsSuccess = testing.assertIsSuccess;
 var assertIsSuccessWithValue = testing.assertIsSuccessWithValue;
 var assertIsFailure = testing.assertIsFailure;
 var assertIsFailureWithRemaining = testing.assertIsFailureWithRemaining;
+var assertIsNoMatch = testing.assertIsNoMatch;
 
 exports.keywordConsumesCharactersOfKeywordIfPresent = function(test) {
     var parser = rules.keyword("true");
@@ -108,7 +109,6 @@ exports.sequenceFailIfSubParserFails = function(test) {
     var result = parseString(parser, "(");
     assertIsFailure(test, result, {
         remaining:[
-            tokens.symbol("(", stringSource("(", 0, 1)),
             tokens.end(stringSource("(", 1, 1))
         ],
         errors: [errors.error({
@@ -143,6 +143,25 @@ exports.sequenceReturnsMapOfCapturedValues = function(test) {
     var result = parseString(parser, "(bob)");
     assertIsSuccess(test, result);
     test.deepEqual(result.value().get(name), "bob");
+    test.done();
+};
+
+exports.guardedRulesBehaveAsUnguardedRulesIfTheyMatch = function(test) {
+    var parser = rules.sequence(rules.guard(rules.symbol("(")), rules.identifier(), rules.symbol(")"));
+    var result = parseString(parser, "(bob)");
+    assertIsSuccess(test, result);
+    test.done();
+};
+
+exports.guardedRulesCauseSequenceNotToMatchWithoutFailingIfNotMatched = function(test) {
+    var parser = rules.sequence(rules.guard(rules.symbol("(")), rules.identifier(), rules.symbol(")"));
+    var result = parseString(parser, "bob");
+    assertIsNoMatch(test, result, {
+        remaining: [
+            tokens.identifier("bob", stringSource("bob", 0, 3)),
+            tokens.end(stringSource("bob", 3, 3))
+        ]
+    });
     test.done();
 };
 
