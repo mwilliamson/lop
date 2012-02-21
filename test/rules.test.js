@@ -181,7 +181,7 @@ exports.failureInSubRuleInSequenceAfterCutCausesError = function(test) {
         errors: [errors.error({
             expected: "identifier",
             actual: "end",
-            location: stringSource("(", 0, 1)
+            location: stringSource("(", 1, 1)
         })]
     });
     test.done();
