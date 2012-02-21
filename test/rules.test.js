@@ -292,6 +292,27 @@ exports.zeroOrMoreWithSeparatorDoesNotConsumeFinalSeparatorIfItIsNotFollowedByMa
     test.done();
 };
 
+exports.zeroOrMoreParsesEmptyStringAndReturnsEmptyArray = function(test) {
+    var parser = rules.zeroOrMore(rules.identifier());
+    var result = parseString(parser, "");
+    assertIsSuccessWithValue(test, result, []);
+    test.done();
+};
+
+exports.zeroOrMoreParsesSingleInstanceOfRuleAndReturnsSingleElementArray = function(test) {
+    var parser = rules.zeroOrMore(rules.identifier());
+    var result = parseString(parser, "blah");
+    assertIsSuccessWithValue(test, result, ["blah"]);
+    test.done();
+};
+
+exports.zeroOrMoreParsesMultipleInstanceOfRuleAndReturnsArray = function(test) {
+    var parser = rules.zeroOrMore(rules.symbol());
+    var result = parseString(parser, "(,)");
+    assertIsSuccessWithValue(test, result, ["(", ",", ")"]);
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ","];
