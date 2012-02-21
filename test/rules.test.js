@@ -156,7 +156,7 @@ exports.sequenceFailIfSubParserFailsAndFinalParserSucceeds = function(test) {
 };
 
 exports.sequenceReturnsMapOfCapturedValues = function(test) {
-    var name = rules.capture(rules.identifier(), "name");
+    var name = rules.sequence.capture(rules.identifier(), "name");
     var parser = rules.sequence(rules.symbol("("), name, rules.symbol(")"));
     var result = parseString(parser, "(bob)");
     assertIsSuccess(test, result);
@@ -188,7 +188,7 @@ exports.failureInSubRuleInSequenceAfterCutCausesError = function(test) {
 };
 
 exports.canPullSingleValueOutOfCapturedValuesUsingExtract = function(test) {
-    var name = rules.capture(rules.identifier(), "name");
+    var name = rules.sequence.capture(rules.identifier(), "name");
     var parser = rules.then(
         rules.sequence(rules.symbol("("), name, rules.symbol(")")),
         rules.sequence.extract(name)
@@ -199,8 +199,8 @@ exports.canPullSingleValueOutOfCapturedValuesUsingExtract = function(test) {
 };
 
 exports.canApplyValuesFromSequenceToFunction = function(test) {
-    var firstName = rules.capture(rules.identifier(), "firstName");
-    var secondName = rules.capture(rules.identifier(), "secondName");
+    var firstName = rules.sequence.capture(rules.identifier(), "firstName");
+    var secondName = rules.sequence.capture(rules.identifier(), "secondName");
     var parser = rules.then(
         rules.sequence(
             secondName,
@@ -217,7 +217,7 @@ exports.canApplyValuesFromSequenceToFunction = function(test) {
 };
 
 exports.exceptionIfTryingToReadAValueThatHasntBeenCaptured = function(test) {
-    var name = rules.capture(rules.identifier(), "name");
+    var name = rules.sequence.capture(rules.identifier(), "name");
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
     var result = parseString(parser, "()");
     assertIsSuccess(test, result);
@@ -231,8 +231,8 @@ exports.exceptionIfTryingToReadAValueThatHasntBeenCaptured = function(test) {
 };
 
 exports.exceptionIfTryingToCaptureValueWithUsedName = function(test) {
-    var firstName = rules.capture(rules.identifier(), "name");
-    var secondName = rules.capture(rules.identifier(), "name");
+    var firstName = rules.sequence.capture(rules.identifier(), "name");
+    var secondName = rules.sequence.capture(rules.identifier(), "name");
     var parser = rules.sequence(secondName, rules.symbol(","), firstName);
     try {
         parseString(parser, "Bobertson,Bob")

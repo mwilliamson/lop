@@ -11,7 +11,7 @@ exports.canParseUsingParser = function(test) {
         symbols: symbols
     };
     var parser = new Parser(options);
-    var name = rules.capture(rules.identifier(), "name");
+    var name = rules.sequence.capture(rules.identifier(), "name");
     var rule = rules.sequence(
         rules.symbol("!"),
         name
