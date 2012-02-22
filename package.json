@@ -1,11 +1,12 @@
 {
     "name": "lop",
-    "version": "0.1.15",
+    "version": "0.1.16",
     "dependencies": {
         "underscore": "latest",
         "options": "git://github.com/mwilliamson/node-options.git"
     },
     "devDependencies": {
-        "nodeunit": "latest"
+        "nodeunit": "latest",
+        "duck": "git://github.com/mwilliamson/duck.js.git"
     }
 }
