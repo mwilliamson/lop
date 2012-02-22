@@ -40,7 +40,10 @@ exports.parsingKeywordFailsIfStringIsNotKeyword = function(test) {
 exports.identifierConsumesCharactersOfIdentifierIfPresent = function(test) {
     var parser = rules.identifier();
     var result = parseString(parser, "blah");
-    assertIsSuccessWithValue(test, result, "blah", stringSource("blah", 0, 4));
+    assertIsSuccess(test, result, {
+        value: "blah",
+        source: stringSource("blah", 0, 4)
+    });
     test.done();
 };
 
@@ -118,7 +121,9 @@ exports.thenMapsOverValueIfOriginalResultIsSuccess = function(test) {
 exports.sequenceSucceedsIfSubParsersCanBeAppliedInOrder = function(test) {
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
     var result = parseString(parser, "()");
-    assertIsSuccess(test, result);
+    assertIsSuccess(test, result, {
+        source: stringSource("()", 0, 2)
+    });
     test.done();
 };
 
