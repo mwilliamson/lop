@@ -318,6 +318,36 @@ exports.zeroOrMoreParsesMultipleInstanceOfRuleAndReturnsArray = function(test) {
     test.done();
 };
 
+exports.oneOrMoreWithSeparatorFailsOnEmptyString = function(test) {
+    var parser = rules.oneOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
+    var result = parseString(parser, "");
+    assertIsFailure(test, result, {
+        remaining:[
+            tokens.end(stringSource("", 0, 0))
+        ],
+        errors: [errors.error({
+            expected: "identifier",
+            actual: "end",
+            location: stringSource("", 0, 0)
+        })]
+    });
+    test.done();
+};
+
+//~ exports.zeroOrMoreWithSeparatorParsesSingleInstanceOfRuleAndReturnsSingleElementArray = function(test) {
+    //~ var parser = rules.zeroOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
+    //~ var result = parseString(parser, "blah");
+    //~ assertIsSuccessWithValue(test, result, ["blah"]);
+    //~ test.done();
+//~ };
+//~ 
+//~ exports.zeroOrMoreWithSeparatorParsesMultipleInstanceOfRuleAndReturnsArray = function(test) {
+    //~ var parser = rules.zeroOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
+    //~ var result = parseString(parser, "apple,banana,coconut");
+    //~ assertIsSuccessWithValue(test, result, ["apple", "banana", "coconut"]);
+    //~ test.done();
+//~ };
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ","];
