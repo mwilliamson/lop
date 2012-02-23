@@ -334,19 +334,19 @@ exports.oneOrMoreWithSeparatorFailsOnEmptyString = function(test) {
     test.done();
 };
 
-//~ exports.zeroOrMoreWithSeparatorParsesSingleInstanceOfRuleAndReturnsSingleElementArray = function(test) {
-    //~ var parser = rules.zeroOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
-    //~ var result = parseString(parser, "blah");
-    //~ assertIsSuccessWithValue(test, result, ["blah"]);
-    //~ test.done();
-//~ };
-//~ 
-//~ exports.zeroOrMoreWithSeparatorParsesMultipleInstanceOfRuleAndReturnsArray = function(test) {
-    //~ var parser = rules.zeroOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
-    //~ var result = parseString(parser, "apple,banana,coconut");
-    //~ assertIsSuccessWithValue(test, result, ["apple", "banana", "coconut"]);
-    //~ test.done();
-//~ };
+exports.oneOrMoreWithSeparatorParsesSingleInstanceOfRuleAndReturnsSingleElementArray = function(test) {
+    var parser = rules.oneOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
+    var result = parseString(parser, "blah");
+    assertIsSuccessWithValue(test, result, ["blah"]);
+    test.done();
+};
+
+exports.oneOrMoreWithSeparatorParsesMultipleInstanceOfRuleAndReturnsArray = function(test) {
+    var parser = rules.oneOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
+    var result = parseString(parser, "apple,banana,coconut");
+    assertIsSuccessWithValue(test, result, ["apple", "banana", "coconut"]);
+    test.done();
+};
 
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
