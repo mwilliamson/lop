@@ -69,7 +69,7 @@ exports.whitespaceIsNotRequiredBetweenIdentifierAndSymbol =
 
 function stringIsTokenisedTo(string, expected) {
     return function(test) {
-        test.deepEqual(expected, new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(string));
+        test.deepEqual(expected, new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(string).tokens);
         test.done();
     };
 };

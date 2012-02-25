@@ -351,6 +351,6 @@ exports.oneOrMoreWithSeparatorParsesMultipleInstanceOfRuleAndReturnsArray = func
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ","];
-    var tokens = new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(string);
+    var tokens = new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(string).tokens;
     return parser(new TokenIterator(tokens));
 }
