@@ -66,6 +66,12 @@ exports.whitespaceIsNotRequiredBetweenIdentifierAndSymbol =
         tokens.symbol(")", tokeniser.stringSource("blah()", 5, 6)),
         tokens.end(tokeniser.stringSource("blah()", 6, 6))
     ]);
+    
+exports.canParseSimpleString =
+    stringIsTokenisedTo('"Blah"', [
+        tokens.string("Blah", tokeniser.stringSource('"Blah"', 0, 6)),
+        tokens.end(tokeniser.stringSource('"Blah"', 6, 6))
+    ]);
 
 function stringIsTokenisedTo(string, expected) {
     return function(test) {
