@@ -72,6 +72,12 @@ exports.canParseSimpleString =
         tokens.string("Blah", tokeniser.stringSource('"Blah"', 0, 6)),
         tokens.end(tokeniser.stringSource('"Blah"', 6, 6))
     ]);
+    
+exports.canParseStringWithEscapedCharacters =
+    stringIsTokenisedTo("\"\\\"\\b\\t\\n\\f\\r\\'\\\\\"", [
+        tokens.string("\"\b\t\n\f\r'\\", tokeniser.stringSource("\"\\\"\\b\\t\\n\\f\\r\\'\\\\\"", 0, 18)),
+        tokens.end(tokeniser.stringSource("\"\\\"\\b\\t\\n\\f\\r\\'\\\\\"", 18, 18))
+    ]);
 
 function stringIsTokenisedTo(string, expected) {
     return function(test) {
