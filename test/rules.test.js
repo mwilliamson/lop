@@ -47,6 +47,16 @@ exports.identifierConsumesCharactersOfIdentifierIfPresent = function(test) {
     test.done();
 };
 
+exports.stringConsumesCharactersOfStringIfPresent = function(test) {
+    var parser = rules.string();
+    var result = parseString(parser, "\"blah\"");
+    assertIsSuccess(test, result, {
+        value: "blah",
+        source: stringSource("\"blah\"", 0, 6)
+    });
+    test.done();
+};
+
 exports.firstSuccessIsReturnedByFirstOf = function(test) {
     var trueParser = rules.keyword("true");
     var falseParser = rules.keyword("false");
