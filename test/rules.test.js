@@ -231,6 +231,28 @@ exports.canApplyValuesFromSequenceToFunction = function(test) {
     test.done();
 };
 
+exports.canApplyValuesWithSourceFromSequenceToFunction = function(test) {
+    var firstName = rules.sequence.capture(rules.identifier(), "firstName");
+    var secondName = rules.sequence.capture(rules.identifier(), "secondName");
+    var parser = rules.then(
+        rules.sequence(
+            secondName,
+            rules.symbol(","),
+            firstName
+        ),
+        rules.sequence.applyValuesWithSource(function(firstName, secondName, source) {
+            return {first: firstName, second: secondName, source: source};
+        }, firstName, secondName)
+    );
+    var result = parseString(parser, "Bobertson,Bob");
+    assertIsSuccessWithValue(test, result, {
+        first: "Bob",
+        second: "Bobertson",
+        source: stringSource("Bobertson,Bob", 0, 13)
+    });
+    test.done();
+};
+
 exports.exceptionIfTryingToReadAValueThatHasntBeenCaptured = function(test) {
     var name = rules.sequence.capture(rules.identifier(), "name");
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
