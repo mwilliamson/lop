@@ -240,9 +240,9 @@ exports.canApplyValuesWithSourceFromSequenceToFunction = function(test) {
             rules.symbol(","),
             firstName
         ),
-        rules.sequence.applyValuesWithSource(function(firstName, secondName, source) {
+        rules.sequence.applyValues(function(firstName, secondName, source) {
             return {first: firstName, second: secondName, source: source};
-        }, firstName, secondName)
+        }, firstName, secondName, rules.sequence.source)
     );
     var result = parseString(parser, "Bobertson,Bob");
     assertIsSuccessWithValue(test, result, {
