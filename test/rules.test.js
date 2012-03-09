@@ -390,9 +390,59 @@ exports.oneOrMoreWithSeparatorParsesMultipleInstanceOfRuleAndReturnsArray = func
     test.done();
 };
 
+exports.leftAssociativeConsumesNothingIfLeftHandSideDoesntMatch = function(test) {
+    var parser = rules.leftAssociative(
+        rules.identifier(),
+        rules.symbol("+"),
+        function(left, right) {
+            return [left, right];
+        }
+    );
+    var result = parseString(parser, "++");
+    assertIsFailure(test, result, {
+        remaining:[
+            tokens.symbol("+", stringSource("++", 0, 1)),
+            tokens.symbol("+", stringSource("++", 1, 2)),
+            tokens.end(stringSource("++", 2, 2))
+        ],
+        errors: [errors.error({
+            expected: "identifier",
+            actual: "symbol \"+\"",
+            location: stringSource("++", 0, 1)
+        })]
+    });
+    test.done();
+};
+
+exports.leftAssociativeReturnsValueOfLeftHandSideIfRightHandSideDoesntMatch = function(test) {
+    var parser = rules.leftAssociative(
+        rules.identifier(),
+        rules.symbol("+"),
+        function(left, right) {
+            return [left, right];
+        }
+    );
+    var result = parseString(parser, "apple");
+    assertIsSuccessWithValue(test, result, "apple");
+    test.done();
+};
+
+exports.leftAssociativeAllowsLeftAssociativeRules = function(test) {
+    var parser = rules.leftAssociative(
+        rules.identifier(),
+        rules.symbol("+"),
+        function(left, right) {
+            return [left, right];
+        }
+    );
+    var result = parseString(parser, "apple++");
+    assertIsSuccessWithValue(test, result, [["apple", "+"], "+"]);
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
-    var symbols = ["(", ")", ","];
+    var symbols = ["(", ")", ",", "+"];
     var tokens = new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(string).tokens;
     return parser(new TokenIterator(tokens));
 }
