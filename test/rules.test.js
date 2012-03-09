@@ -440,6 +440,19 @@ exports.leftAssociativeAllowsLeftAssociativeRules = function(test) {
     test.done();
 };
 
+exports.leftAssociativeCanHaveMultipleChoicesForRight = function(test) {
+    var parser = rules.leftAssociative(
+        rules.identifier(),
+        rules.leftAssociative.firstOf(
+            {rule: rules.symbol("+"), func: function(left, right) { return [left, right]; }},
+            {rule: rules.symbol(","), func: function(left, right) { return [left]; }}
+        )
+    );
+    var result = parseString(parser, "apple+,");
+    assertIsSuccessWithValue(test, result, [["apple", "+"]]);
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ",", "+"];
