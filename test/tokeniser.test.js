@@ -79,6 +79,18 @@ exports.canParseStringWithEscapedCharacters =
         tokens.end(tokeniser.stringSource("\"\\\"\\b\\t\\n\\f\\r\\'\\\\\"", 18, 18))
     ]);
 
+exports.canParseZero =
+    stringIsTokenisedTo("0", [
+        tokens.number("0", tokeniser.stringSource("0", 0, 1)),
+        tokens.end(tokeniser.stringSource("0", 1, 1))
+    ]);
+
+exports.canParsePositiveIntegers =
+    stringIsTokenisedTo("42", [
+        tokens.number("42", tokeniser.stringSource("42", 0, 2)),
+        tokens.end(tokeniser.stringSource("42", 2, 2))
+    ]);
+
 function stringIsTokenisedTo(string, expected) {
     return function(test) {
         test.deepEqual(expected, new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(string).tokens);
