@@ -57,6 +57,16 @@ exports.stringConsumesCharactersOfStringIfPresent = function(test) {
     test.done();
 };
 
+exports.numberConsumesCharactersOfNumberIfPresent = function(test) {
+    var parser = rules.number();
+    var result = parseString(parser, "42");
+    assertIsSuccess(test, result, {
+        value: "42",
+        source: stringSource("42", 0, 2)
+    });
+    test.done();
+};
+
 exports.firstSuccessIsReturnedByFirstOf = function(test) {
     var trueParser = rules.keyword("true");
     var falseParser = rules.keyword("false");
