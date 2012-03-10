@@ -16,7 +16,10 @@ var assertIsError = testing.assertIsError;
 exports.keywordConsumesCharactersOfKeywordIfPresent = function(test) {
     var parser = rules.keyword("true");
     var result = parseString(parser, "true");
-    assertIsSuccessWithValue(test, result, "true", stringSource("true", 0, 4));
+    assertIsSuccess(test, result, {
+        value: "true",
+        source: stringSource("true", 0, 4)
+    });
     test.done();
 };
 
