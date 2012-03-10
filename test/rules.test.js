@@ -70,6 +70,17 @@ exports.numberConsumesCharactersOfNumberIfPresent = function(test) {
     test.done();
 };
 
+exports.endConsumesEndTokenIfPresent = function(test) {
+    var parser = rules.end();
+    var result = parseString(parser, "");
+    assertIsSuccess(test, result, {
+        value: null,
+        source: stringSource("", 0, 0),
+        remaining: []
+    });
+    test.done();
+};
+
 exports.firstSuccessIsReturnedByFirstOf = function(test) {
     var trueParser = rules.keyword("true");
     var falseParser = rules.keyword("false");
