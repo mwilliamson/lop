@@ -374,6 +374,24 @@ exports.zeroOrMoreParsesMultipleInstanceOfRuleAndReturnsArray = function(test) {
     test.done();
 };
 
+exports.zeroOrMoreReturnsErrorIfSubRuleReturnsError = function(test) {
+    var parser = rules.zeroOrMore(
+        rules.sequence(rules.identifier(), rules.sequence.cut(), rules.symbol(";"))
+    );
+    var result = parseString(parser, "blah");
+    assertIsError(test, result, {
+        remaining:[
+            tokens.end(stringSource("blah", 4, 4))
+        ],
+        errors: [errors.error({
+            expected: "symbol \";\"",
+            actual: "end",
+            location: stringSource("blah", 4, 4)
+        })]
+    });
+    test.done();
+};
+
 exports.oneOrMoreWithSeparatorFailsOnEmptyString = function(test) {
     var parser = rules.oneOrMoreWithSeparator(rules.identifier(), rules.symbol(","));
     var result = parseString(parser, "");
