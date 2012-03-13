@@ -5,6 +5,7 @@ var tokeniser = require("../lib/tokeniser");
 var testing = require("../lib/testing");
 var TokenIterator = require("../lib/TokenIterator");
 var errors = require("../lib/errors");
+var results = require("../lib/parsing-results");
 var tokens = tokeniser.tokens;
 var stringSource = tokeniser.stringSource;
 var assertIsSuccess = testing.assertIsSuccess;
@@ -317,6 +318,19 @@ exports.optionalRuleConsumesInputIfPossible = function(test) {
     var result = parseString(parser, "(");
     assertIsSuccess(test, result);
     test.deepEqual(result.value(), options.some("("));
+    test.done();
+};
+
+exports.optionalRulePreservesErrors = function(test) {
+    var error = results.error([errors.error({
+        expected: "something",
+        actual: "something else"
+    })]);
+    var parser = rules.optional(function(input) {
+        return error;
+    });
+    var result = parseString(parser, "");
+    test.deepEqual(result, error);
     test.done();
 };
 
