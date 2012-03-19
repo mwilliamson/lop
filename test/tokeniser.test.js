@@ -78,6 +78,12 @@ exports.canParseStringWithEscapedCharacters =
         tokens.string("\"\b\t\n\f\r'\\", tokeniser.stringSource("\"\\\"\\b\\t\\n\\f\\r\\'\\\\\"", 0, 18)),
         tokens.end(tokeniser.stringSource("\"\\\"\\b\\t\\n\\f\\r\\'\\\\\"", 18, 18))
     ]);
+    
+exports.canReadUnicodeCharacters = 
+    stringIsTokenisedTo("\"\\u000a\"", [
+        tokens.string("\n", tokeniser.stringSource("\"\\u000a\"", 0, 8)),
+        tokens.end(tokeniser.stringSource("\"\\u000a\"", 8, 8))
+    ]);
 
 exports.canParseZero =
     stringIsTokenisedTo("0", [
