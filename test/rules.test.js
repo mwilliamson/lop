@@ -8,7 +8,7 @@ var TokenIterator = require("../lib/TokenIterator");
 var errors = require("../lib/errors");
 var results = require("../lib/parsing-results");
 var tokens = tokeniser.tokens;
-var stringSource = tokeniser.stringSource;
+var StringSource = require("../lib/StringSource");
 var assertIsSuccess = testing.assertIsSuccess;
 var assertIsSuccessWithValue = testing.assertIsSuccessWithValue;
 var assertIsFailure = testing.assertIsFailure;
@@ -20,7 +20,7 @@ exports.keywordConsumesCharactersOfKeywordIfPresent = function(test) {
     var result = parseString(parser, "true");
     assertIsSuccess(test, result, {
         value: "true",
-        source: stringSource("true", 0, 4)
+        source: StringSource.range("true", 0, 4)
     });
     test.done();
 };
@@ -30,13 +30,13 @@ exports.parsingKeywordFailsIfStringIsNotKeyword = function(test) {
     var result = parseString(parser, "blah");
     assertIsFailure(test, result, {
         remaining: [
-            tokens.identifier("blah", stringSource("blah", 0, 4)),
-            tokens.end(stringSource("blah", 4, 4))
+            tokens.identifier("blah", StringSource.range("blah", 0, 4)),
+            tokens.end(StringSource.range("blah", 4, 4))
         ],
         errors: [errors.error({
             expected: "keyword \"true\"",
             actual: "identifier \"blah\"",
-            location: stringSource("blah", 0, 4)
+            location: StringSource.range("blah", 0, 4)
         })]
     });
     test.done();
@@ -47,7 +47,7 @@ exports.identifierConsumesCharactersOfIdentifierIfPresent = function(test) {
     var result = parseString(parser, "blah");
     assertIsSuccess(test, result, {
         value: "blah",
-        source: stringSource("blah", 0, 4)
+        source: StringSource.range("blah", 0, 4)
     });
     test.done();
 };
@@ -57,7 +57,7 @@ exports.stringConsumesCharactersOfStringIfPresent = function(test) {
     var result = parseString(parser, "\"blah\"");
     assertIsSuccess(test, result, {
         value: "blah",
-        source: stringSource("\"blah\"", 0, 6)
+        source: StringSource.range("\"blah\"", 0, 6)
     });
     test.done();
 };
@@ -67,7 +67,7 @@ exports.numberConsumesCharactersOfNumberIfPresent = function(test) {
     var result = parseString(parser, "42");
     assertIsSuccess(test, result, {
         value: "42",
-        source: stringSource("42", 0, 2)
+        source: StringSource.range("42", 0, 2)
     });
     test.done();
 };
@@ -77,7 +77,7 @@ exports.endConsumesEndTokenIfPresent = function(test) {
     var result = parseString(parser, "");
     assertIsSuccess(test, result, {
         value: null,
-        source: stringSource("", 0, 0),
+        source: StringSource.range("", 0, 0),
         remaining: []
     });
     test.done();
@@ -100,13 +100,13 @@ exports.firstOfFailsIfNoParsersMatch = function(test) {
     var result = parseString(rules.firstOf("Boolean", trueParser, falseParser), "blah");
     assertIsFailure(test, result, {
         remaining:[
-            tokens.identifier("blah", stringSource("blah", 0, 4)),
-            tokens.end(stringSource("blah", 4, 4))
+            tokens.identifier("blah", StringSource.range("blah", 0, 4)),
+            tokens.end(StringSource.range("blah", 4, 4))
         ],
         errors: [errors.error({
             expected: "Boolean",
             actual: "identifier \"blah\"",
-            location: stringSource("blah", 0, 4)
+            location: StringSource.range("blah", 0, 4)
         })]
     });
     test.done();
@@ -118,13 +118,13 @@ exports.firstOfReturnsErrorIfSubRuleReturnsErrorEvenIfLaterRuleSucceeds = functi
     var result = parseString(rules.firstOf("Boolean", trueParser, falseParser), "false");
     assertIsError(test, result, {
         remaining:[
-            tokens.keyword("false", stringSource("false", 0, 5)),
-            tokens.end(stringSource("false", 5, 5))
+            tokens.keyword("false", StringSource.range("false", 0, 5)),
+            tokens.end(StringSource.range("false", 5, 5))
         ],
         errors: [errors.error({
             expected: "keyword \"true\"",
             actual: "keyword \"false\"",
-            location: stringSource("false", 0, 5)
+            location: StringSource.range("false", 0, 5)
         })]
     });
     test.done();
@@ -135,13 +135,13 @@ exports.thenReturnsFailureIfOriginalResultIsFailure = function(test) {
     var result = parseString(parser, "blah");
     assertIsFailure(test, result, {
         remaining:[
-            tokens.identifier("blah", stringSource("blah", 0, 4)),
-            tokens.end(stringSource("blah", 4, 4))
+            tokens.identifier("blah", StringSource.range("blah", 0, 4)),
+            tokens.end(StringSource.range("blah", 4, 4))
         ],
         errors: [errors.error({
             expected: "keyword \"true\"",
             actual: "identifier \"blah\"",
-            location: stringSource("blah", 0, 4)
+            location: StringSource.range("blah", 0, 4)
         })]
     });
     test.done();
@@ -158,7 +158,7 @@ exports.sequenceSucceedsIfSubParsersCanBeAppliedInOrder = function(test) {
     var parser = rules.sequence(rules.symbol("("), rules.symbol(")"));
     var result = parseString(parser, "()");
     assertIsSuccess(test, result, {
-        source: stringSource("()", 0, 2)
+        source: StringSource.range("()", 0, 2)
     });
     test.done();
 };
@@ -168,12 +168,12 @@ exports.sequenceFailIfSubParserFails = function(test) {
     var result = parseString(parser, "(");
     assertIsFailure(test, result, {
         remaining:[
-            tokens.end(stringSource("(", 1, 1))
+            tokens.end(StringSource.range("(", 1, 1))
         ],
         errors: [errors.error({
             expected: "symbol \")\"",
             actual: "end",
-            location: stringSource("(", 1, 1)
+            location: StringSource.range("(", 1, 1)
         })]
     });
     test.done();
@@ -184,13 +184,13 @@ exports.sequenceFailIfSubParserFailsAndFinalParserSucceeds = function(test) {
     var result = parseString(parser, ")");
     assertIsFailure(test, result, {
         remaining:[
-            tokens.symbol(")", stringSource(")", 0, 1)),
-            tokens.end(stringSource(")", 1, 1))
+            tokens.symbol(")", StringSource.range(")", 0, 1)),
+            tokens.end(StringSource.range(")", 1, 1))
         ],
         errors: [errors.error({
             expected: "symbol \"(\"",
             actual: "symbol \")\"",
-            location: stringSource(")", 0, 1)
+            location: StringSource.range(")", 0, 1)
         })]
     });
     test.done();
@@ -217,12 +217,12 @@ exports.failureInSubRuleInSequenceAfterCutCausesError = function(test) {
     var result = parseString(parser, "(");
     assertIsError(test, result, {
         remaining:[
-            tokens.end(stringSource("(", 1, 1))
+            tokens.end(StringSource.range("(", 1, 1))
         ],
         errors: [errors.error({
             expected: "identifier",
             actual: "end",
-            location: stringSource("(", 1, 1)
+            location: StringSource.range("(", 1, 1)
         })]
     });
     test.done();
@@ -274,7 +274,7 @@ exports.canApplyValuesWithSourceFromSequenceToFunction = function(test) {
     assertIsSuccessWithValue(test, result, {
         first: "Bob",
         second: "Bobertson",
-        source: stringSource("Bobertson,Bob", 0, 13)
+        source: StringSource.range("Bobertson,Bob", 0, 13)
     });
     test.done();
 };
@@ -361,8 +361,8 @@ exports.zeroOrMoreWithSeparatorDoesNotConsumeFinalSeparatorIfItIsNotFollowedByMa
     var result = parseString(parser, "apple,banana,");
     assertIsSuccess(test, result, {
         remaining: [
-            tokens.symbol(",", stringSource("apple,banana,", 12, 13)),
-            tokens.end(stringSource("apple,banana,", 13, 13))
+            tokens.symbol(",", StringSource.range("apple,banana,", 12, 13)),
+            tokens.end(StringSource.range("apple,banana,", 13, 13))
         ],
     });
     test.done();
@@ -396,12 +396,12 @@ exports.zeroOrMoreReturnsErrorIfSubRuleReturnsError = function(test) {
     var result = parseString(parser, "blah");
     assertIsError(test, result, {
         remaining:[
-            tokens.end(stringSource("blah", 4, 4))
+            tokens.end(StringSource.range("blah", 4, 4))
         ],
         errors: [errors.error({
             expected: "symbol \";\"",
             actual: "end",
-            location: stringSource("blah", 4, 4)
+            location: StringSource.range("blah", 4, 4)
         })]
     });
     test.done();
@@ -412,12 +412,12 @@ exports.oneOrMoreWithSeparatorFailsOnEmptyString = function(test) {
     var result = parseString(parser, "");
     assertIsFailure(test, result, {
         remaining:[
-            tokens.end(stringSource("", 0, 0))
+            tokens.end(StringSource.range("", 0, 0))
         ],
         errors: [errors.error({
             expected: "identifier",
             actual: "end",
-            location: stringSource("", 0, 0)
+            location: StringSource.range("", 0, 0)
         })]
     });
     test.done();
@@ -448,14 +448,14 @@ exports.leftAssociativeConsumesNothingIfLeftHandSideDoesntMatch = function(test)
     var result = parseString(parser, "++");
     assertIsFailure(test, result, {
         remaining:[
-            tokens.symbol("+", stringSource("++", 0, 1)),
-            tokens.symbol("+", stringSource("++", 1, 2)),
-            tokens.end(stringSource("++", 2, 2))
+            tokens.symbol("+", StringSource.range("++", 0, 1)),
+            tokens.symbol("+", StringSource.range("++", 1, 2)),
+            tokens.end(StringSource.range("++", 2, 2))
         ],
         errors: [errors.error({
             expected: "identifier",
             actual: "symbol \"+\"",
-            location: stringSource("++", 0, 1)
+            location: StringSource.range("++", 0, 1)
         })]
     });
     test.done();
@@ -503,12 +503,8 @@ exports.leftAssociativeCanHaveMultipleChoicesForRight = function(test) {
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ",", "+"];
-    var source = {
-        substring: function(startIndex, endIndex) {
-            return stringSource(string, startIndex, endIndex);
-        }
-    };
-    var iterator = new StringIterator(string, source);
+    var source = new StringSource(string);
+    var iterator = new StringIterator(source);
     var tokens = new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(iterator).tokens;
     return parser(new TokenIterator(tokens));
 }

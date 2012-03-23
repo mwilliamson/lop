@@ -1,11 +1,11 @@
 var TokenIterator = require("../lib/TokenIterator");
 var tokeniser = require("../lib/tokeniser");
 var tokens = tokeniser.tokens;
-var stringSource = tokeniser.stringSource;
+var StringSource = require("../lib/StringSource");
 
 exports.canCreateSourceRangeToIteratorBeyondEnd = function(test) {
     var source = function(startIndex, endIndex) {
-        return stringSource("blah", startIndex, endIndex);
+        return StringSource.range("blah", startIndex, endIndex);
     };
     var startIterator = new TokenIterator([
         tokens.identifier("blah", source(0, 4)),
