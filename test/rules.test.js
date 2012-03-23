@@ -3,6 +3,7 @@ var options = require("options");
 var rules = require("../lib/rules");
 var tokeniser = require("../lib/tokeniser");
 var testing = require("../lib/testing");
+var StringIterator = require("../lib/StringIterator");
 var TokenIterator = require("../lib/TokenIterator");
 var errors = require("../lib/errors");
 var results = require("../lib/parsing-results");
@@ -502,6 +503,12 @@ exports.leftAssociativeCanHaveMultipleChoicesForRight = function(test) {
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ",", "+"];
-    var tokens = new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(string).tokens;
+    var source = {
+        substring: function(startIndex, endIndex) {
+            return stringSource(string, startIndex, endIndex);
+        }
+    };
+    var iterator = new StringIterator(string, source);
+    var tokens = new tokeniser.Tokeniser({keywords: keywords, symbols: symbols}).tokenise(iterator).tokens;
     return parser(new TokenIterator(tokens));
 }
