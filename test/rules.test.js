@@ -500,6 +500,18 @@ exports.leftAssociativeCanHaveMultipleChoicesForRight = function(test) {
     test.done();
 };
 
+exports.leftAssociativeReturnsErrorIfRightHandSideReturnsError = function(test) {
+    var parser = rules.leftAssociative(
+        rules.identifier(),
+        rules.leftAssociative.firstOf(
+            {rule: rules.sequence(rules.sequence.cut(), rules.symbol("+")), func: function() {}}
+        )
+    );
+    var result = parseString(parser, "apple");
+    assertIsError(test, result);
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var symbols = ["(", ")", ",", "+"];
