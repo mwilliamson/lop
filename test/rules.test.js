@@ -368,6 +368,16 @@ exports.zeroOrMoreWithSeparatorDoesNotConsumeFinalSeparatorIfItIsNotFollowedByMa
     test.done();
 };
 
+exports.zeroOrMoreReturnsErrorIfFirstUseOfRuleReturnsError = function(test) {
+    var parser = rules.zeroOrMoreWithSeparator(
+        rules.sequence(rules.identifier(), rules.sequence.cut(), rules.identifier()),
+        rules.symbol(",")
+    );
+    var result = parseString(parser, "apple");
+    assertIsError(test, result);
+    test.done();
+};
+
 exports.zeroOrMoreParsesEmptyStringAndReturnsEmptyArray = function(test) {
     var parser = rules.zeroOrMore(rules.identifier());
     var result = parseString(parser, "");
