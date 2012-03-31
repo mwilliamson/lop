@@ -2,22 +2,19 @@ var lop = require("../");
 var Parser = lop.Parser;
 var rules = lop.rules;
 var testing = lop.testing;
+var Tokeniser = require("./Tokeniser");
 
 exports.canParseUsingParser = function(test) {
-    var keywords = ["true", "false"];
-    var symbols = ["(", ")", "!"];
-    var options = {
-        keywords: keywords,
-        symbols: symbols
-    };
-    var parser = new Parser(options);
-    var name = rules.sequence.capture(rules.identifier(), "name");
+    var tokens = new Tokeniser({keywords: []}).tokenise("! blah");
+    
+    var name = rules.sequence.capture(rules.token("identifier"), "name");
     var rule = rules.sequence(
-        rules.symbol("!"),
+        rules.token("identifier", "!"),
         name
     );
     
-    var result = parser.parseString(rule, "!blah");
+    var parser = new Parser();
+    var result = parser.parseTokens(rule, tokens);
     
     testing.assertIsSuccess(test, result);
     test.deepEqual(result.value().get(name), "blah");
@@ -25,18 +22,6 @@ exports.canParseUsingParser = function(test) {
     test.done();
 };
 
-exports.canIgnoreWhitespace = function(test) {
-    var keywords = ["true", "false"];
-    var symbols = ["(", ")", "!"];
-    var options = {
-        keywords: keywords,
-        symbols: symbols,
-        ignoreWhitespace: true
-    };
-    var parser = new Parser(options);
-    var rule = rules.sequence(rules.symbol("!"), rules.symbol("!"));
-    var result = parser.parseString(rule, " ! ! ");
-    
-    testing.assertIsSuccess(test, result);
-    test.done();
+var parseString = function(parser, string) {
+    return parser(new TokenIterator(tokens));
 };
