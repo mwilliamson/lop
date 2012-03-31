@@ -5,7 +5,7 @@ var StringSource = require("../lib/StringSource");
 
 exports.canCreateSourceRangeToIteratorBeyondEnd = function(test) {
     var source = function(startIndex, endIndex) {
-        return StringSource.range("blah", startIndex, endIndex);
+        return new StringSource("blah").range(startIndex, endIndex);
     };
     var startIterator = new TokenIterator([
         tokens.identifier("blah", source(0, 4)),
