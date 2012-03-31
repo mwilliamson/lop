@@ -11,3 +11,11 @@ exports.stringSourceRangeDescriptionIncludesLineAndCharacterNumber = function(te
     );
     test.done();
 };
+
+exports.stringSourceRangeDescriptionIncludesDescriptionIfProvided = function(test) {
+    test.equal(
+        "File: /some/file\nLine number: 1\nCharacter number: 3",
+        new StringSource("blah", "File: /some/file").range(2, 3).describe()
+    );
+    test.done();
+};
