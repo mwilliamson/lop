@@ -10,7 +10,7 @@ exports.canCreateSourceRangeToIteratorBeyondEnd = function(test) {
         new Token("identifier", "blah", source(0, 4)),
         new Token("end", null, source(4, 4))
     ]);
-    var endIterator = startIterator.slice(2);
+    var endIterator = startIterator.tail().tail();
     var range = startIterator.to(endIterator);
     test.deepEqual(source(0, 4), range);
     test.done();
