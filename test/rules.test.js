@@ -522,7 +522,7 @@ exports.leftAssociativeReturnsErrorIfRightHandSideReturnsError = function(test) 
     test.done();
 };
 
-exports.tokenRuleConsumeTokenWhenTokenIsOfCorrectType = function(test) {
+exports.nonConsumingRuleDoesNotConsumeInput = function(test) {
     var parser = rules.nonConsuming(rules.token("keyword", "true"));
     var result = parseString(parser, "true");
     assertIsSuccess(test, result, {
