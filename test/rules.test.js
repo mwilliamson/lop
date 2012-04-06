@@ -522,6 +522,17 @@ exports.leftAssociativeReturnsErrorIfRightHandSideReturnsError = function(test) 
     test.done();
 };
 
+exports.tokenRuleConsumeTokenWhenTokenIsOfCorrectType = function(test) {
+    var parser = rules.nonConsuming(rules.token("keyword", "true"));
+    var result = parseString(parser, "true");
+    assertIsSuccess(test, result, {
+        value: "true",
+        source: stringSourceRange("true", 0, 4),
+        remaining: [token("keyword", "true"), token("end", null)]
+    });
+    test.done();
+};
+
 var parseString = function(parser, string) {
     var keywords = ["true", "false"];
     var tokens = new Tokeniser({keywords: keywords}).tokenise(string);
