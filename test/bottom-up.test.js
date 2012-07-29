@@ -15,7 +15,7 @@ var assertIsError = testing.assertIsError;
 var Tokeniser = require("./Tokeniser");
 var Token = require("../lib/Token");
 
-var stringSourceRange = function(string, startIndex, endIndex) {
+var source = function(string, startIndex, endIndex) {
     return new StringSource(string).range(startIndex, endIndex);
 };
 
@@ -28,21 +28,18 @@ exports.canParsePrefixExpression = function(test) {
         [rules.tokenOfType("identifier")],
         []
     ).rule();
-    var result = parseString(rule, "blah");
+    var result = parse(rule, [
+        token("identifier", "blah", source("blah", 0, 4)),
+        token("end", null, source("blah", 4, 4))
+    ]);
     assertIsSuccess(test, result, {
         value: "blah",
-        source: stringSourceRange("blah", 0, 4)
+        source: source("blah", 0, 4)
     });
     test.done();
 };
 
-var parseString = function(parser, string) {
-    var keywords = ["true", "false"];
-    var tokens = new Tokeniser({keywords: keywords}).tokenise(string);
-    return parser(new TokenIterator(tokens));
-};
-
-var parseTokens = function(parser, tokens) {
+var parse = function(parser, tokens) {
     return parser(new TokenIterator(tokens));
 };
 
