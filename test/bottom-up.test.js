@@ -119,6 +119,67 @@ exports.parsingStopsIfPrefixRuleFails = function(test) {
     test.done();
 };
 
+
+exports.canParseExpressionWithTwoLeftAssociativeOperators = function(test) {
+    var partialAddRule = lazyRule(function() {
+        var right = rules.sequence.capture(expressionParser.leftAssociative("add"), "right");
+        return rules.then(
+            rules.sequence(
+                rules.token("symbol", "+"),
+                right
+            ),
+            rules.sequence.applyValues(function(right) {
+                return function(left) {
+                    return ["+", left, right];
+                };
+            }, right)
+        );
+    });
+    
+    var partialMultiplyRule = lazyRule(function() {
+        var right = rules.sequence.capture(expressionParser.leftAssociative("multiply"), "right");
+        return rules.then(
+            rules.sequence(
+                rules.token("symbol", "*"),
+                right
+            ),
+            rules.sequence.applyValues(function(right) {
+                return function(left) {
+                    return ["*", left, right];
+                };
+            }, right)
+        );
+    });
+    
+    var expressionParser = bottomUp.parser("expression",
+        [rules.tokenOfType("number")],
+        [
+            bottomUp.infix("multiply", partialMultiplyRule),
+            bottomUp.infix("add", partialAddRule)
+        ]
+    );
+    
+    var rule = expressionParser.rule();
+    
+    var result = parse(rule, [
+        token("number", "1", source("1 * 2 * 3 + 4 * 5", 0, 1)),
+        token("symbol", "*", source("1 * 2 * 3 + 4 * 5", 2, 3)),
+        token("number", "2", source("1 * 2 * 3 + 4 * 5", 4, 5)),
+        token("symbol", "*", source("1 * 2 * 3 + 4 * 5", 6, 7)),
+        token("number", "3", source("1 * 2 * 3 + 4 * 5", 8, 9)),
+        token("symbol", "+", source("1 * 2 * 3 + 4 * 5", 10, 11)),
+        token("number", "4", source("1 * 2 * 3 + 4 * 5", 12, 13)),
+        token("symbol", "*", source("1 * 2 * 3 + 4 * 5", 14, 15)),
+        token("number", "5", source("1 * 2 * 3 + 4 * 5", 16, 17)),
+        token("end", null, source("1 * 2 * 3 + 4 * 5", 17, 17))
+    ]);
+    assertIsSuccess(test, result, {
+        value: ["+", ["*", ["*", "1", "2"], "3"], ["*", "4", "5"]],
+        source: source("1 * 2 * 3 + 4 * 5", 0, 17)
+    });
+    test.done();
+};
+
 var parse = function(parser, tokens) {
     return parser(new TokenIterator(tokens));
 };
