@@ -267,6 +267,21 @@ exports.canApplyValuesFromSequenceToFunction = function(test) {
     test.done();
 };
 
+exports.canApplyValuesFromSequenceToFunctionUsingMapOnSequenceRule = function(test) {
+    var firstName = rules.sequence.capture(identifier(), "firstName");
+    var secondName = rules.sequence.capture(identifier(), "secondName");
+    var parser = rules.sequence(
+            secondName,
+            identifier(","),
+            firstName
+        ).map(function(secondName, firstName) {
+            return {first: firstName, second: secondName};
+        });
+    var result = parseString(parser, "Bobertson , Bob");
+    assertIsSuccessWithValue(test, result, {first: "Bob", second: "Bobertson"});
+    test.done();
+};
+
 exports.canApplyValuesWithSourceFromSequenceToFunction = function(test) {
     var firstName = rules.sequence.capture(identifier(), "firstName");
     var secondName = rules.sequence.capture(identifier(), "secondName");
