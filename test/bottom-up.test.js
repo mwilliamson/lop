@@ -39,7 +39,81 @@ exports.canParsePrefixExpression = function(test) {
     test.done();
 };
 
+exports.canParseSimpleInfixExpression = function(test) {
+    var partialCallRule = lazyRule(function() {
+        var arg = rules.sequence.capture(rule, "arg");
+        return rules.then(
+            rules.sequence(
+                rules.token("symbol", "("),
+                arg,
+                rules.token("symbol", ")")
+            ),
+            rules.sequence.applyValues(function(arg) {
+                return function(left) {
+                    return [left, arg];
+                };
+            }, arg)
+        );
+    });
+    
+    var rule = bottomUp.parser("expression",
+        [rules.tokenOfType("identifier")],
+        [bottomUp.infix("call", partialCallRule)]
+    ).rule();
+    
+    var result = parse(rule, [
+        token("identifier", "print", source("print(name)", 0, 5)),
+        token("symbol", "(", source("print(name)", 5, 6)),
+        token("identifier", "name", source("print(name)", 6, 10)),
+        token("symbol", ")", source("print(name)", 10, 11)),
+        token("end", null, source("print(name)", 11, 11))
+    ]);
+    assertIsSuccess(test, result, {
+        value: ["print", "name"],
+        source: source("print(name)", 0, 11)
+    });
+    test.done();
+};
+    //~ 
+    //~ TestCase("can parse simple infix expression", fun() => do {
+        //~ def partialCallRule fun(tokens: Sequence[Token]) =>
+            //~ rules.sequence()
+                //~ .next(rules.token("symbol", "("))
+                //~ .capture(expressionParser.rule())
+                //~ .next(rules.token("symbol", ")"))
+                //~ .map(fun(arg: ExpressionNode) => fun(callee: ExpressionNode) => tuple(callee, arg))
+                //~ (tokens);
+                //~ 
+        //~ val expressionParser = pratt.parser("expression",
+            //~ listOf(rules.tokenOfType("identifier")),
+            //~ listOf(
+                //~ pratt.infix("call", partialCallRule)
+            //~ )
+        //~ );
+        //~ 
+        //~ return assertSuccessfulParse(
+            //~ expressionParser.rule(),
+            //~ listOf(
+                //~ Token("identifier", "print"),
+                //~ Token("symbol", "("),
+                //~ Token("identifier", "name"),
+                //~ Token("symbol", ")")
+            //~ ),
+            //~ equalTo(tuple("print", "name"))
+        //~ );
+    //~ }),
+
 var parse = function(parser, tokens) {
     return parser(new TokenIterator(tokens));
 };
 
+
+var lazyRule = function(ruleBuilder) {
+    var rule;
+    return function(input) {
+        if (!rule) {
+            rule = ruleBuilder();
+        }
+        return rule(input);
+    };
+};
