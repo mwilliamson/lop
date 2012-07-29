@@ -73,19 +73,15 @@ exports.canParseSimpleInfixExpression = function(test) {
 
 exports.parsingStopsIfPrefixRuleFails = function(test) {
     var partialCallRule = lazyRule(function() {
-        var arg = rules.sequence.capture(rule, "arg");
-        return rules.then(
-            rules.sequence(
-                rules.token("symbol", "("),
-                arg,
-                rules.token("symbol", ")")
-            ),
-            rules.sequence.applyValues(function(arg) {
-                return function(left) {
-                    return [left, arg];
-                };
-            }, arg)
-        );
+        return rules.sequence(
+            rules.token("symbol", "("),
+            rules.sequence.capture(rule),
+            rules.token("symbol", ")")
+        ).map(function(arg) {
+            return function(left) {
+                return [left, arg];
+            };
+        });
     });
     
     var rule = bottomUp.parser("expression",
@@ -119,32 +115,26 @@ exports.parsingStopsIfPrefixRuleFails = function(test) {
 exports.canParseExpressionWithTwoLeftAssociativeOperators = function(test) {
     var partialAddRule = lazyRule(function() {
         var right = rules.sequence.capture(expressionParser.leftAssociative("add"), "right");
-        return rules.then(
-            rules.sequence(
-                rules.token("symbol", "+"),
-                right
-            ),
-            rules.sequence.applyValues(function(right) {
-                return function(left) {
-                    return ["+", left, right];
-                };
-            }, right)
-        );
+        return rules.sequence(
+            rules.token("symbol", "+"),
+            right
+        ).map(function(right) {
+            return function(left) {
+                return ["+", left, right];
+            };
+        });
     });
     
     var partialMultiplyRule = lazyRule(function() {
         var right = rules.sequence.capture(expressionParser.leftAssociative("multiply"), "right");
-        return rules.then(
-            rules.sequence(
-                rules.token("symbol", "*"),
-                right
-            ),
-            rules.sequence.applyValues(function(right) {
-                return function(left) {
-                    return ["*", left, right];
-                };
-            }, right)
-        );
+        return rules.sequence(
+            rules.token("symbol", "*"),
+            right
+        ).map(function(right) {
+            return function(left) {
+                return ["*", left, right];
+            };
+        });
     });
     
     var expressionParser = bottomUp.parser("expression",
