@@ -269,7 +269,7 @@ exports.canApplyValuesFromSequenceToFunction = function(test) {
 
 exports.canApplyValuesFromSequenceToFunctionUsingMapOnSequenceRule = function(test) {
     var firstName = rules.sequence.capture(identifier(), "firstName");
-    var secondName = rules.sequence.capture(identifier(), "secondName");
+    var secondName = rules.sequence.capture(identifier());
     var parser = rules.sequence(
             secondName,
             identifier(","),

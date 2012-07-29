@@ -41,19 +41,15 @@ exports.canParsePrefixExpression = function(test) {
 
 exports.canParseSimpleInfixExpression = function(test) {
     var partialCallRule = lazyRule(function() {
-        var arg = rules.sequence.capture(rule, "arg");
-        return rules.then(
-            rules.sequence(
-                rules.token("symbol", "("),
-                arg,
-                rules.token("symbol", ")")
-            ),
-            rules.sequence.applyValues(function(arg) {
-                return function(left) {
-                    return [left, arg];
-                };
-            }, arg)
-        );
+        return rules.sequence(
+            rules.token("symbol", "("),
+            rules.sequence.capture(rule),
+            rules.token("symbol", ")")
+        ).map(function(arg) {
+            return function(left) {
+                return [left, arg];
+            };
+        });
     });
     
     var rule = bottomUp.parser("expression",
