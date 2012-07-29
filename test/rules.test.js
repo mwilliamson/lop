@@ -239,6 +239,16 @@ exports.canPullSingleValueOutOfCapturedValuesUsingExtract = function(test) {
     test.done();
 };
 
+exports.canPullSingleValueOutOfCapturedValuesUsingHeadOnSequenceRule = function(test) {
+    var name = rules.sequence.capture(identifier(), "name");
+    var parser =
+        rules.sequence(identifier("("), name, identifier(")"))
+            .head();
+    var result = parseString(parser, "( bob )");
+    assertIsSuccessWithValue(test, result, "bob");
+    test.done();
+};
+
 exports.canApplyValuesFromSequenceToFunction = function(test) {
     var firstName = rules.sequence.capture(identifier(), "firstName");
     var secondName = rules.sequence.capture(identifier(), "secondName");
