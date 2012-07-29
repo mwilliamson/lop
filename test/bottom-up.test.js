@@ -75,6 +75,50 @@ exports.canParseSimpleInfixExpression = function(test) {
     test.done();
 };
 
+exports.parsingStopsIfPrefixRuleFails = function(test) {
+    var partialCallRule = lazyRule(function() {
+        var arg = rules.sequence.capture(rule, "arg");
+        return rules.then(
+            rules.sequence(
+                rules.token("symbol", "("),
+                arg,
+                rules.token("symbol", ")")
+            ),
+            rules.sequence.applyValues(function(arg) {
+                return function(left) {
+                    return [left, arg];
+                };
+            }, arg)
+        );
+    });
+    
+    var rule = bottomUp.parser("expression",
+        [rules.tokenOfType("identifier")],
+        [bottomUp.infix("call", partialCallRule)]
+    ).rule();
+    
+    var result = parse(rule, [
+        token("symbol", "(", source("(name)", 0, 1)),
+        token("identifier", "name", source("(name)", 1, 5)),
+        token("symbol", ")", source("(name)", 5, 6)),
+        token("end", null, source("(name)", 6, 6))
+    ]);
+    assertIsFailure(test, result, {
+        remaining: [
+            token("symbol", "(", source("(name)", 0, 1)),
+            token("identifier", "name", source("(name)", 1, 5)),
+            token("symbol", ")", source("(name)", 5, 6)),
+            token("end", null, source("(name)", 6, 6))
+        ],
+        errors: [errors.error({
+            expected: "expression",
+            actual: "symbol \"(\"",
+            location: source("(name)", 0, 1)
+        })]
+    });
+    test.done();
+};
+
 var parse = function(parser, tokens) {
     return parser(new TokenIterator(tokens));
 };
