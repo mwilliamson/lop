@@ -74,34 +74,6 @@ exports.canParseSimpleInfixExpression = function(test) {
     });
     test.done();
 };
-    //~ 
-    //~ TestCase("can parse simple infix expression", fun() => do {
-        //~ def partialCallRule fun(tokens: Sequence[Token]) =>
-            //~ rules.sequence()
-                //~ .next(rules.token("symbol", "("))
-                //~ .capture(expressionParser.rule())
-                //~ .next(rules.token("symbol", ")"))
-                //~ .map(fun(arg: ExpressionNode) => fun(callee: ExpressionNode) => tuple(callee, arg))
-                //~ (tokens);
-                //~ 
-        //~ val expressionParser = pratt.parser("expression",
-            //~ listOf(rules.tokenOfType("identifier")),
-            //~ listOf(
-                //~ pratt.infix("call", partialCallRule)
-            //~ )
-        //~ );
-        //~ 
-        //~ return assertSuccessfulParse(
-            //~ expressionParser.rule(),
-            //~ listOf(
-                //~ Token("identifier", "print"),
-                //~ Token("symbol", "("),
-                //~ Token("identifier", "name"),
-                //~ Token("symbol", ")")
-            //~ ),
-            //~ equalTo(tuple("print", "name"))
-        //~ );
-    //~ }),
 
 var parse = function(parser, tokens) {
     return parser(new TokenIterator(tokens));
