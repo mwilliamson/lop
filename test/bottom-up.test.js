@@ -40,21 +40,19 @@ exports.canParsePrefixExpression = function(test) {
 };
 
 exports.canParseSimpleInfixExpression = function(test) {
-    var partialCallRule = lazyRule(function() {
+    var partialCallRule = bottomUp.infix("call", function(parser) {
         return rules.sequence(
             rules.token("symbol", "("),
-            rules.sequence.capture(rule),
+            rules.sequence.capture(parser.rule()),
             rules.token("symbol", ")")
-        ).map(function(arg) {
-            return function(left) {
-                return [left, arg];
-            };
-        });
+        ).head();
+    }).map(function(left, arg) {
+        return [left, arg];
     });
     
     var rule = bottomUp.parser("expression",
         [rules.tokenOfType("identifier")],
-        [bottomUp.infix("call", partialCallRule)]
+        [partialCallRule]
     ).rule();
     
     var result = parse(rule, [
@@ -72,21 +70,19 @@ exports.canParseSimpleInfixExpression = function(test) {
 };
 
 exports.parsingStopsIfPrefixRuleFails = function(test) {
-    var partialCallRule = lazyRule(function() {
+    var partialCallRule = bottomUp.infix("call", function(parser) {
         return rules.sequence(
             rules.token("symbol", "("),
-            rules.sequence.capture(rule),
+            rules.sequence.capture(parser.rule()),
             rules.token("symbol", ")")
-        ).map(function(arg) {
-            return function(left) {
-                return [left, arg];
-            };
-        });
+        ).head();
+    }).map(function(left, arg) {
+        return [left, arg];
     });
     
     var rule = bottomUp.parser("expression",
         [rules.tokenOfType("identifier")],
-        [bottomUp.infix("call", partialCallRule)]
+        [partialCallRule]
     ).rule();
     
     var result = parse(rule, [
@@ -112,35 +108,29 @@ exports.parsingStopsIfPrefixRuleFails = function(test) {
 };
 
 exports.canParseExpressionWithTwoLeftAssociativeOperators = function(test) {
-    var partialAddRule = lazyRule(function() {
-        var right = rules.sequence.capture(expressionParser.leftAssociative("add"), "right");
+    var partialAddRule = bottomUp.infix("add", function(parser) {
         return rules.sequence(
             rules.token("symbol", "+"),
-            right
-        ).map(function(right) {
-            return function(left) {
-                return ["+", left, right];
-            };
-        });
+            rules.sequence.capture(parser.leftAssociative("add"))
+        ).head();
+    }).map(function(left, right) {
+        return ["+", left, right];
     });
     
-    var partialMultiplyRule = lazyRule(function() {
-        var right = rules.sequence.capture(expressionParser.leftAssociative("multiply"), "right");
+    var partialMultiplyRule = bottomUp.infix("multiply", function(parser) {
         return rules.sequence(
             rules.token("symbol", "*"),
-            right
-        ).map(function(right) {
-            return function(left) {
-                return ["*", left, right];
-            };
-        });
+            rules.sequence.capture(parser.leftAssociative("multiply"))
+        ).head();
+    }).map(function(left, right) {
+        return ["*", left, right];
     });
     
     var expressionParser = bottomUp.parser("expression",
         [rules.tokenOfType("number")],
         [
-            bottomUp.infix("multiply", partialMultiplyRule),
-            bottomUp.infix("add", partialAddRule)
+            partialMultiplyRule,
+            partialAddRule
         ]
     );
     
@@ -166,35 +156,29 @@ exports.canParseExpressionWithTwoLeftAssociativeOperators = function(test) {
 };
 
 exports.canParseExpressionWithRightAssociativeOperators = function(test) {
-    var partialAddRule = lazyRule(function() {
-        var right = rules.sequence.capture(expressionParser.leftAssociative("add"));
+    var partialAddRule = bottomUp.infix("add", function(parser) {
         return rules.sequence(
             rules.token("symbol", "+"),
-            right
-        ).map(function(right) {
-            return function(left) {
-                return ["+", left, right];
-            };
-        });
+            rules.sequence.capture(parser.leftAssociative("add"))
+        ).head();
+    }).map(function(left, right) {
+        return ["+", left, right];
     });
     
-    var partialPowerRule = lazyRule(function() {
-        var right = rules.sequence.capture(expressionParser.rightAssociative("power"));
+    var partialPowerRule = bottomUp.infix("power", function(parser) {
         return rules.sequence(
             rules.token("symbol", "^"),
-            right
-        ).map(function(right) {
-            return function(left) {
-                return ["^", left, right];
-            };
-        });
+            rules.sequence.capture(parser.rightAssociative("power"))
+        ).head();
+    }).map(function(left, right) {
+        return ["^", left, right];
     });
     
     var expressionParser = bottomUp.parser("expression",
         [rules.tokenOfType("number")],
         [
-            bottomUp.infix("power", partialPowerRule),
-            bottomUp.infix("add", partialAddRule)
+            partialPowerRule,
+            partialAddRule
         ]
     );
     
@@ -221,15 +205,4 @@ exports.canParseExpressionWithRightAssociativeOperators = function(test) {
 
 var parse = function(parser, tokens) {
     return parser(new TokenIterator(tokens));
-};
-
-
-var lazyRule = function(ruleBuilder) {
-    var rule;
-    return function(input) {
-        if (!rule) {
-            rule = ruleBuilder();
-        }
-        return rule(input);
-    };
 };
