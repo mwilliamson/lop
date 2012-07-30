@@ -5,3 +5,4 @@ exports.errors = require("./lib/errors");
 exports.results = require("./lib/parsing-results");
 exports.StringSource = require("./lib/StringSource");
 exports.Token = require("./lib/Token");
+exports.bottomUp = require("./lib/bottom-up");
