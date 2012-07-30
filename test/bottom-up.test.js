@@ -23,6 +23,43 @@ var token = function(tokenType, value, source) {
     return new Token(tokenType, value, source);
 };
 
+var partialCallRule = bottomUp.infix("call", function(parser) {
+    return rules.sequence(
+        rules.token("symbol", "("),
+        rules.sequence.capture(parser.rule()),
+        rules.token("symbol", ")")
+    ).head();
+}).map(function(left, arg) {
+    return [left, arg];
+});
+
+var partialAddRule = bottomUp.infix("add", function(parser) {
+    return rules.sequence(
+        rules.token("symbol", "+"),
+        rules.sequence.capture(parser.leftAssociative("add"))
+    ).head();
+}).map(function(left, right) {
+    return ["+", left, right];
+});
+
+var partialMultiplyRule = bottomUp.infix("multiply", function(parser) {
+    return rules.sequence(
+        rules.token("symbol", "*"),
+        rules.sequence.capture(parser.leftAssociative("multiply"))
+    ).head();
+}).map(function(left, right) {
+    return ["*", left, right];
+});
+    
+var partialPowerRule = bottomUp.infix("power", function(parser) {
+    return rules.sequence(
+        rules.token("symbol", "^"),
+        rules.sequence.capture(parser.rightAssociative("power"))
+    ).head();
+}).map(function(left, right) {
+    return ["^", left, right];
+});
+
 exports.canParsePrefixExpression = function(test) {
     var rule = bottomUp.parser("expression",
         [rules.tokenOfType("identifier")],
@@ -40,16 +77,6 @@ exports.canParsePrefixExpression = function(test) {
 };
 
 exports.canParseSimpleInfixExpression = function(test) {
-    var partialCallRule = bottomUp.infix("call", function(parser) {
-        return rules.sequence(
-            rules.token("symbol", "("),
-            rules.sequence.capture(parser.rule()),
-            rules.token("symbol", ")")
-        ).head();
-    }).map(function(left, arg) {
-        return [left, arg];
-    });
-    
     var rule = bottomUp.parser("expression",
         [rules.tokenOfType("identifier")],
         [partialCallRule]
@@ -70,16 +97,6 @@ exports.canParseSimpleInfixExpression = function(test) {
 };
 
 exports.parsingStopsIfPrefixRuleFails = function(test) {
-    var partialCallRule = bottomUp.infix("call", function(parser) {
-        return rules.sequence(
-            rules.token("symbol", "("),
-            rules.sequence.capture(parser.rule()),
-            rules.token("symbol", ")")
-        ).head();
-    }).map(function(left, arg) {
-        return [left, arg];
-    });
-    
     var rule = bottomUp.parser("expression",
         [rules.tokenOfType("identifier")],
         [partialCallRule]
@@ -108,24 +125,6 @@ exports.parsingStopsIfPrefixRuleFails = function(test) {
 };
 
 exports.canParseExpressionWithTwoLeftAssociativeOperators = function(test) {
-    var partialAddRule = bottomUp.infix("add", function(parser) {
-        return rules.sequence(
-            rules.token("symbol", "+"),
-            rules.sequence.capture(parser.leftAssociative("add"))
-        ).head();
-    }).map(function(left, right) {
-        return ["+", left, right];
-    });
-    
-    var partialMultiplyRule = bottomUp.infix("multiply", function(parser) {
-        return rules.sequence(
-            rules.token("symbol", "*"),
-            rules.sequence.capture(parser.leftAssociative("multiply"))
-        ).head();
-    }).map(function(left, right) {
-        return ["*", left, right];
-    });
-    
     var expressionParser = bottomUp.parser("expression",
         [rules.tokenOfType("number")],
         [
@@ -156,24 +155,6 @@ exports.canParseExpressionWithTwoLeftAssociativeOperators = function(test) {
 };
 
 exports.canParseExpressionWithRightAssociativeOperators = function(test) {
-    var partialAddRule = bottomUp.infix("add", function(parser) {
-        return rules.sequence(
-            rules.token("symbol", "+"),
-            rules.sequence.capture(parser.leftAssociative("add"))
-        ).head();
-    }).map(function(left, right) {
-        return ["+", left, right];
-    });
-    
-    var partialPowerRule = bottomUp.infix("power", function(parser) {
-        return rules.sequence(
-            rules.token("symbol", "^"),
-            rules.sequence.capture(parser.rightAssociative("power"))
-        ).head();
-    }).map(function(left, right) {
-        return ["^", left, right];
-    });
-    
     var expressionParser = bottomUp.parser("expression",
         [rules.tokenOfType("number")],
         [
