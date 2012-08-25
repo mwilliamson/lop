@@ -3,7 +3,7 @@
     "version": "0.2.5",
     "dependencies": {
         "underscore": "latest",
-        "options": "git://github.com/mwilliamson/node-options.git",
+        "option": "0.2.x",
         "duck": "git://github.com/mwilliamson/duck.js.git"
     },
     "devDependencies": {

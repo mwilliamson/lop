@@ -1,5 +1,3 @@
-var options = require("options");
-
 var rules = require("../lib/rules");
 var bottomUp = require("../lib/bottom-up");
 var testing = require("../lib/testing");

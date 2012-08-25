@@ -1,4 +1,4 @@
-var options = require("options");
+var options = require("option");
 
 var rules = require("../lib/rules");
 var testing = require("../lib/testing");
