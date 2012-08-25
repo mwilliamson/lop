@@ -30,6 +30,20 @@ var identifier = function(value) {
     return rules.token("identifier", value);
 };
 
+exports.tokenRuleFailsIfInputIsEmpty = function(test) {
+    var tokens = [];
+    var rule = rules.token("keyword", "true");
+    var result = rule(new TokenIterator(tokens));
+    assertIsFailure(test, result, {
+        remaining: [],
+        errors: [errors.error({
+            expected: "keyword \"true\"",
+            actual: "end of tokens"
+        })]
+    });
+    test.done();
+};
+
 exports.tokenRuleConsumeTokenWhenTokenIsOfCorrectType = function(test) {
     var parser = rules.token("keyword", "true");
     var result = parseString(parser, "true");
