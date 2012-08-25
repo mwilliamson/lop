@@ -3,34 +3,34 @@
 lop is a library to create parsers using parser combinators with helpful errors.
 
 ```javascript
-    // This rule is wrapped inside lop.rule to defer evaluation until
-    // the rule is used -- otherwise, it would reference integerRule
-    // and ifRule, which don't exist yet.
-    var expressionRule = lop.rule(function() {
-        return rules.firstOf("expression",
-            integerRule,
-            ifRule
-        );
-    });
-    
-    var integerRule = rules.then(
-        rules.tokenOfType("integer"),
-        function(value) {
-            return new IntegerNode(parseInt(value, 10));
-        }
+// This rule is wrapped inside lop.rule to defer evaluation until
+// the rule is used -- otherwise, it would reference integerRule
+// and ifRule, which don't exist yet.
+var expressionRule = lop.rule(function() {
+    return rules.firstOf("expression",
+        integerRule,
+        ifRule
     );
+});
 
-    var ifRule = rules.sequence(
-        rules.token("keyword", "if"),
-        rules.sequence.cut(),
-        rules.sequence.capture(expressionRule),
-        rules.token("keyword", "then"),
-        rules.sequence.capture(expressionRule),
-        rules.token("keyword", "else"),
-        rules.sequence.capture(expressionRule)
-    ).map(function(condition, trueBranch, falseBranch) {
-        return new IfNode(condition, trueBranch, falseBranch);
-    });
+var integerRule = rules.then(
+    rules.tokenOfType("integer"),
+    function(value) {
+        return new IntegerNode(parseInt(value, 10));
+    }
+);
+
+var ifRule = rules.sequence(
+    rules.token("keyword", "if"),
+    rules.sequence.cut(),
+    rules.sequence.capture(expressionRule),
+    rules.token("keyword", "then"),
+    rules.sequence.capture(expressionRule),
+    rules.token("keyword", "else"),
+    rules.sequence.capture(expressionRule)
+).map(function(condition, trueBranch, falseBranch) {
+    return new IfNode(condition, trueBranch, falseBranch);
+});
 ```
 
 lop tries to provide helpful errors where possible. For instance, in `ifRule`
