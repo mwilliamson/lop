@@ -20,20 +20,17 @@ lop is a library to create parsers using parser combinators with helpful errors.
         }
     );
 
-    var ifRule = rules.then(
-        rules.sequence(
-            rules.token("keyword", "if"),
-            rules.sequence.cut(),
-            rules.sequence.capture(expressionRule),
-            rules.token("keyword", "then"),
-            rules.sequence.capture(expressionRule),
-            rules.token("keyword", "else"),
-            rules.sequence.capture(expressionRule)
-        ),
-        function(condition, trueBranch, falseBranch) {
-            return new IfNode(condition, trueBranch, falseBranch);
-        }
-    );
+    var ifRule = rules.sequence(
+        rules.token("keyword", "if"),
+        rules.sequence.cut(),
+        rules.sequence.capture(expressionRule),
+        rules.token("keyword", "then"),
+        rules.sequence.capture(expressionRule),
+        rules.token("keyword", "else"),
+        rules.sequence.capture(expressionRule)
+    ).map(function(condition, trueBranch, falseBranch) {
+        return new IfNode(condition, trueBranch, falseBranch);
+    });
 ```
 
 ## Tokens
