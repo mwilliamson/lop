@@ -55,3 +55,26 @@ you could use:
 
 The main advantage of using `lop.Token` is that you can then use the rules `lop.token` and `lop.tokenOfType` (described later). If you don't use `lop.Token`, you must define your own atomic rules, but you can use the other rules without any modifications.
 
+## Parser
+
+To parse an array of tokens, you can call the method `parseTokens` on `lop.Parser`, passing in the parsing rule and the array of tokens. For instance, assuming we already have a `tokenise` function (the one above would do fine):
+
+    function parseSentence(inputString) {
+        var tokens = tokenise(inputString);
+        var parser = new lop.Parser();
+        parser.parseTokens(sentenceRule, tokens);
+        if (!parseResult.isSuccess()) {
+            throw new Error("Failed to parse: " + describeFailure(parseResult));
+        }
+        return parseResult.value();
+    }
+
+    function describeFailure(parseResult) {
+        return parseResult.errors().map(describeError).join("\n"));
+       
+        function describeError(error) {
+            return error.describe();
+        }
+    }
+
+The final question is then: how do we define rules for the parser, such as the currently undefined `sentenceRule`?
