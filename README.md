@@ -81,4 +81,25 @@ function describeFailure(parseResult) {
 }
 ```
 
+The result of parsing can be success, failure, or error. While failure indicates
+that the rule didn't match the input tokens, error indicates that the input
+was invalid in some way. In general, rules will backtrack when they
+encounter a failure, but will completely abort when they encounter an error.
+Each of these results has a number of methods:
+
+```javascript
+    result.isSuccess() // true for success, false otherwise
+    result.isFailure() // true for failure, false otherwise
+    result.isError() // true for error, false otherwise
+    result.value() // if success, the value that was parsed
+    result.remaining() // if success, the tokens that weren't consumed by parsing
+    result.source() // the StringSourceRange containing the consumed tokens
+    result.errors() // if failure or error, an array of descriptions of the failure/error
+```
+
 The final question is then: how do we define rules for the parser, such as the currently undefined `sentenceRule`?
+
+## Rules
+
+Each rule in lop accepts an iterator over tokens, and returns a result, as
+described in the previous section.
