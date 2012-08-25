@@ -16,7 +16,7 @@ lop is a library to create parsers using parser combinators with helpful errors.
     var integerRule = rules.then(
         rules.tokenOfType("integer"),
         function(value) {
-            return new IntegerNode(value);
+            return new IntegerNode(parseInt(value, 10));
         }
     );
 
