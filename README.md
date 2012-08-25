@@ -40,3 +40,18 @@ When using a parser built with lop, the input is an array of tokens. A token can
             return part.type !== "word" || part.value !== "";
         });
     }
+
+lop also defines its own notion of a token. Each instance of `lop.Token` has a type, name, and source, similarly to most of the tokens that would be created by the token above. For instance, instead of:
+
+    {
+        type: "word",
+        value: value,
+        source: source
+    }
+
+you could use:
+
+    new Token("word", value, source)
+
+The main advantage of using `lop.Token` is that you can then use the rules `lop.token` and `lop.tokenOfType` (described later). If you don't use `lop.Token`, you must define your own atomic rules, but you can use the other rules without any modifications.
+
