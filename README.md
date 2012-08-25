@@ -103,3 +103,34 @@ The final question is then: how do we define rules for the parser, such as the c
 
 Each rule in lop accepts an iterator over tokens, and returns a result, as
 described in the previous section.
+
+### lop.rules.token(*tokenType*, *value*)
+
+Success if the next token has type `tokenType` and value `value`, failure
+otherwise. Value on success is the value of the token.
+
+### lop.rules.tokenOfType(*tokenType*)
+
+Success if the next token has type `tokenType`, failure otherwise. Value on
+success is the value of the token.
+
+### lop.rules.firstOf(*name*, *subRules*)
+
+Tries each rule in `subRules` on the input tokens in turn. We return the result
+from the first sub-rule that returns success or error. In other words, return the
+result from the first sub-rule that doesn't return failure. If all sub-rules return
+failure, this rule returns failure.
+
+### lop.rules.then(*subRule*, *func*)
+
+Try `subRule` on the input tokens, and if successful, map over the result. For
+instance:
+
+```javascript
+lop.rules.then(
+    lop.rules.tokenOfType("integer"),
+    function(tokenValue) {
+        return parseInt(tokenValue, 10);
+    }
+)
+```
