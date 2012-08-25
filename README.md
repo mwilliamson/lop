@@ -55,7 +55,7 @@ you could use:
 
     new Token("word", value, source)
 
-The main advantage of using `lop.Token` is that you can then use the rules `lop.token` and `lop.tokenOfType` (described later). If you don't use `lop.Token`, you must define your own atomic rules, but you can use the other rules without any modifications.
+The main advantage of using `lop.Token` is that you can then use the rules `lop.rules.token` and `lop.rules.tokenOfType` (described later). If you don't use `lop.Token`, you must define your own atomic rules, but you can use the other rules without any modifications.
 
 ## Parser
 
