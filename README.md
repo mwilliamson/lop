@@ -3,6 +3,12 @@
 lop is a library to create parsers using parser combinators with helpful errors.
 
 ```javascript
+
+function parse(tokens) {
+    var parser = lop.Parser();
+    return parser.parse(expressionRule, tokens);
+}
+
 // This rule is wrapped inside lop.rule to defer evaluation until
 // the rule is used -- otherwise, it would reference integerRule
 // and ifRule, which don't exist yet.
