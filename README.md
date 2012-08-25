@@ -61,35 +61,38 @@ When using a parser built with lop, the input is an array of tokens. A token can
 ```javascript
 var StringSource = require("lop").StringSource;
 
+function tokeniseString(string) {
+    return tokenise(new StringSource(string, "raw string"));
+}
+
 function tokenise(source) {
+    var string = source.asString();
     var whitespaceRegex = /(\s+)/g;
     var result;
     var start = 0;
-    
-    var stringSource = new StringSource(source, "raw string");
     var parts = [];
     
     while ((result = whitespaceRegex.exec(source)) !== null) {
         parts.push({
             type: "word",
-            value: source.substring(start, result.index),
-            source: stringSource.range(start, result.index)
+            value: string.substring(start, result.index),
+            source: source.range(start, result.index)
         });
         parts.push({
             type: "whitespace",
             value: result[1],
-            source: stringSource.range(result.index, whitespaceRegex.lastIndex)
+            source: source.range(result.index, whitespaceRegex.lastIndex)
         });
         start = whitespaceRegex.lastIndex;
     }
     parts.push({
         type: "word",
-        value: source.substring(start),
-        source: stringSource.range(start, source.length)
+        value: string.substring(start),
+        source: source.range(start, string.length)
     });
     parts.push({
         type: "end",
-        source: stringSource.range(source.length, source.length)
+        source: source.range(string.length, string.length)
     });
     return parts.filter(function(part) {
         return part.type !== "word" || part.value !== "";
