@@ -119,8 +119,8 @@ The main advantage of using `lop.Token` is that you can then use the rules `lop.
 To parse an array of tokens, you can call the method `parseTokens` on `lop.Parser`, passing in the parsing rule and the array of tokens. For instance, assuming we already have a `tokenise` function (the one above would do fine):
 
 ```javascript
-function parseSentence(inputString) {
-    var tokens = tokenise(inputString);
+function parseSentence(source) {
+    var tokens = tokenise(source);
     var parser = new lop.Parser();
     var parseResult = parser.parseTokens(sentenceRule, tokens);
     if (!parseResult.isSuccess()) {
