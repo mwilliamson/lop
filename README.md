@@ -33,6 +33,21 @@ lop is a library to create parsers using parser combinators with helpful errors.
     });
 ```
 
+lop tries to provide helpful errors where possible. For instance, in `ifRule`
+as defined above, there is a cut following the keyword `if`. Before the cut,
+if we fail to match the input, we can backtrack -- in this case, we backtrack
+and see if another form of expression might match the input. However, after the
+cut, we prevent backtracking. Once we've see the keyword `if`, there's no doubt
+about which sort of expression this is, so if parsing fails later in this rule,
+there's no point in backtracking. This allows informative error messages to be
+generated: if we try to parse the string `"if 1 42 else 12"`, we get the error:
+
+    Error: File: /tmp/lop-example
+    Line number: 1
+    Character number: 6:
+    Expected keyword "then"
+    but got integer "42"
+
 ## Tokens
 
 When using a parser built with lop, the input is an array of tokens. A token can be any value so long as it has the property `source`, which must be a `StringSourceRange`. For instance, to create a simple tokeniser that generates a stream of words tokens separated by whitespace tokens:
