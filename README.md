@@ -1,5 +1,41 @@
 # lop -- parsing library for JavaScript
 
+lop is a library to create parsers using parser combinators with helpful errors.
+
+```javascript
+    // This rule is wrapped inside lop.rule to defer evaluation until
+    // the rule is used -- otherwise, it would reference integerRule
+    // and ifRule, which don't exist yet.
+    var expressionRule = lop.rule(function() {
+        return rules.firstOf("expression",
+            integerRule,
+            ifRule
+        );
+    });
+    
+    var integerRule = rules.then(
+        rules.tokenOfType("integer"),
+        function(value) {
+            return new IntegerNode(value);
+        }
+    );
+
+    var ifRule = rules.then(
+        rules.sequence(
+            rules.token("keyword", "if"),
+            rules.sequence.cut(),
+            rules.sequence.capture(expressionRule),
+            rules.token("keyword", "then"),
+            rules.sequence.capture(expressionRule),
+            rules.token("keyword", "else"),
+            rules.sequence.capture(expressionRule)
+        ),
+        function(condition, trueBranch, falseBranch) {
+            return new IfNode(condition, trueBranch, falseBranch);
+        }
+    );
+```
+
 ## Tokens
 
 When using a parser built with lop, the input is an array of tokens. A token can be any value so long as it has the property `source`, which must be a `StringSourceRange`. For instance, to create a simple tokeniser that generates a stream of words tokens separated by whitespace tokens:
