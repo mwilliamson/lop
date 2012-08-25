@@ -13,3 +13,12 @@ exports.errorDescriptionIncludesLocationAndActualValueAndExpectedValue = functio
     test.equal("Here:\nExpected Nothing\nbut got Something", error.describe());
     test.done();
 };
+
+exports.canDescribeErrorWithoutLocation = function(test) {
+    var error = errors.error({
+        expected: "Nothing",
+        actual: "Something"
+    });
+    test.equal("Expected Nothing\nbut got Something", error.describe());
+    test.done();
+};
