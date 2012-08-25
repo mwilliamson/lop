@@ -191,3 +191,9 @@ lop.rules.then(
     }
 )
 ```
+
+### lop.rules.optional(*subRule*)
+
+Try `subRule` on the input tokens. If the sub-rule is successful with the value
+`value`, then return success with the value `options.some(value)`. If the sub-rule fails, return
+success with the value `options.none`. If the sub-rules errors, return that error.
