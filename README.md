@@ -119,7 +119,7 @@ To parse an array of tokens, you can call the method `parseTokens` on `lop.Parse
 function parseSentence(inputString) {
     var tokens = tokenise(inputString);
     var parser = new lop.Parser();
-    parser.parseTokens(sentenceRule, tokens);
+    var parseResult = parser.parseTokens(sentenceRule, tokens);
     if (!parseResult.isSuccess()) {
         throw new Error("Failed to parse: " + describeFailure(parseResult));
     }
