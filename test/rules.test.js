@@ -490,6 +490,36 @@ exports.oneOrMoreWithSeparatorParsesMultipleInstanceOfRuleAndReturnsArray = func
     test.done();
 };
 
+exports.oneOrMoreFailsOnEmptyString = function(test) {
+    var parser = rules.oneOrMore(identifier());
+    var result = parseString(parser, "");
+    assertIsFailure(test, result, {
+        remaining:[
+            token("end", null, stringSourceRange("", 0, 0))
+        ],
+        errors: [errors.error({
+            expected: "identifier",
+            actual: "end",
+            location: stringSourceRange("", 0, 0)
+        })]
+    });
+    test.done();
+};
+
+exports.oneOrMoreParsesSingleInstanceOfRuleAndReturnsSingleElementArray = function(test) {
+    var parser = rules.oneOrMore(identifier());
+    var result = parseString(parser, "blah");
+    assertIsSuccessWithValue(test, result, ["blah"]);
+    test.done();
+};
+
+exports.oneOrMoreParsesMultipleInstanceOfRuleAndReturnsArray = function(test) {
+    var parser = rules.oneOrMore(identifier());
+    var result = parseString(parser, "apple banana coconut");
+    assertIsSuccessWithValue(test, result, ["apple", "banana", "coconut"]);
+    test.done();
+};
+
 exports.leftAssociativeConsumesNothingIfLeftHandSideDoesntMatch = function(test) {
     var parser = rules.leftAssociative(
         keyword(),
