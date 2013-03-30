@@ -29,6 +29,24 @@ exports.firstMatchingRuleIsUsed = stringIsTokenisedTo(":", [
     endToken(":")
 ]);
 
+exports.valuesOfZeroLengthAreIgnored = function(test) {
+    var expectedTokens = [
+        new Token("unrecognisedCharacter", "!", stringSourceRange("!btn", 0, 1)),
+        new Token("identifier", "btn", stringSourceRange("!btn", 1, 4)),
+        endToken("!btn")
+    ];
+    
+    var rules = [
+        {
+            name: "identifier",
+            regex: /([a-z]*)/
+        }
+    ];
+    var tokeniser = new RegexTokeniser(rules);
+    test.deepEqual(expectedTokens, tokeniser.tokenise("!btn"));
+    test.done();
+};
+
 function endToken(input) {
     var source = stringSourceRange(input, input.length, input.length);
     return new Token("end", null, source);
