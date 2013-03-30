@@ -130,7 +130,7 @@ function parseSentence(source) {
 }
 
 function describeFailure(parseResult) {
-    return parseResult.errors().map(describeError).join("\n"));
+    return parseResult.errors().map(describeError).join("\n");
    
     function describeError(error) {
         return error.describe();
