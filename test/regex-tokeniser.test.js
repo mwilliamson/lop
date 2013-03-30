@@ -24,6 +24,16 @@ exports.unrecognisedCharactersAreTokenised = stringIsTokenisedTo("!btn", [
     new Token("end", null, stringSourceRange("!btn", 4, 4))
 ]);
 
+exports.firstMatchingRuleIsUsed = stringIsTokenisedTo(":", [
+    new Token("colon1", ":", stringSourceRange(":", 0, 1)),
+    endToken(":")
+]);
+
+function endToken(input) {
+    var source = stringSourceRange(input, input.length, input.length);
+    return new Token("end", null, source);
+}
+
 function stringIsTokenisedTo(input, expected) {
     return function(test) {
         test.deepEqual(expected, tokenise(input));
@@ -44,6 +54,14 @@ function tokenise(input) {
         {
             name: "dot",
             regex: /\./
+        },
+        {
+            name: "colon1",
+            regex: /:/
+        },
+        {
+            name: "colon2",
+            regex: /:/
         }
     ];
     var tokeniser = new RegexTokeniser(rules);
