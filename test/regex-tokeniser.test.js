@@ -39,11 +39,11 @@ function tokenise(input) {
     var rules = [
         {
             name: "identifier",
-            regex: /([a-z]+)/g
+            regex: /([a-z]+)/
         },
         {
             name: "dot",
-            regex: /\./g
+            regex: /\./
         }
     ];
     var tokeniser = new RegexTokeniser(rules);
