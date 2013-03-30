@@ -6,7 +6,7 @@ lop is a library to create parsers using parser combinators with helpful errors.
 
 function parse(tokens) {
     var parser = lop.Parser();
-    return parser.parse(expressionRule, tokens);
+    return parser.parseTokens(expressionRule, tokens);
 }
 
 // This rule is wrapped inside lop.rule to defer evaluation until
