@@ -3,25 +3,25 @@ var Token = require("../lib/Token");
 var StringSource = require("../lib/StringSource");
 
 exports.emptyStringIsTokenisedToEndToken = stringIsTokenisedTo("", [
-    new Token("end", null, stringSourceRange("", 0, 0))
+    endToken("")
 ]);
 
 exports.canMatchSingleToken = stringIsTokenisedTo("blah", [
     new Token("identifier", "blah", stringSourceRange("blah", 0, 4)),
-    new Token("end", null, stringSourceRange("blah", 4, 4))
+    endToken("blah")
 ]);
 
 exports.canMatchMultipleTokens = stringIsTokenisedTo("a.btn", [
     new Token("identifier", "a", stringSourceRange("a.btn", 0, 1)),
     new Token("dot", ".", stringSourceRange("a.btn", 1, 2)),
     new Token("identifier", "btn", stringSourceRange("a.btn", 2, 5)),
-    new Token("end", null, stringSourceRange("a.btn", 5, 5))
+    endToken("a.btn")
 ]);
 
 exports.unrecognisedCharactersAreTokenised = stringIsTokenisedTo("!btn", [
     new Token("unrecognisedCharacter", "!", stringSourceRange("!btn", 0, 1)),
     new Token("identifier", "btn", stringSourceRange("!btn", 1, 4)),
-    new Token("end", null, stringSourceRange("!btn", 4, 4))
+    endToken("!btn")
 ]);
 
 exports.firstMatchingRuleIsUsed = stringIsTokenisedTo(":", [
