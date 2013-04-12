@@ -1,6 +1,6 @@
 {
     "name": "lop",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "dependencies": {
         "underscore": "~1.4.4",
         "option": "0.2.x",
