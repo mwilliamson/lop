@@ -2,11 +2,11 @@
     "name": "lop",
     "version": "0.2.6",
     "dependencies": {
-        "underscore": "latest",
+        "underscore": "~1.4.4",
         "option": "0.2.x",
-        "duck": "git://github.com/mwilliamson/duck.js.git"
+        "duck": "~0.1.10"
     },
     "devDependencies": {
-        "nodeunit": "latest"
+        "nodeunit": "~0.8.0"
     }
 }
