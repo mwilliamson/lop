@@ -8,5 +8,6 @@
     },
     "devDependencies": {
         "nodeunit": "~0.8.0"
-    }
+    },
+    "license": "BSD"
 }
