@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "underscore": "~1.4.4",
-        "option": "0.2.x",
+        "option": "~0.2.1",
         "duck": "~0.1.11"
     },
     "devDependencies": {
