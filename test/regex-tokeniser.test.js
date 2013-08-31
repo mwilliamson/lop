@@ -52,6 +52,23 @@ exports.tokenValueIsFirstCaptureOfRegex = stringIsTokenisedTo('"a"', [
     endToken('"a"')
 ]);
 
+exports.tokenWithNoCaptureHasUndefinedValue = function(test) {
+    var expectedTokens = [
+        new Token("bang", undefined, stringSourceRange("!", 0, 1)),
+        endToken("!")
+    ];
+    
+    var rules = [
+        {
+            name: "bang",
+            regex: /!/
+        }
+    ];
+    var tokeniser = new RegexTokeniser(rules);
+    test.deepEqual(expectedTokens, tokeniser.tokenise("!"));
+    test.done();
+};
+
 function endToken(input) {
     var source = stringSourceRange(input, input.length, input.length);
     return new Token("end", null, source);
