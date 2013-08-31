@@ -47,6 +47,11 @@ exports.valuesOfZeroLengthAreIgnored = function(test) {
     test.done();
 };
 
+exports.tokenValueIsFirstCaptureOfRegex = stringIsTokenisedTo('"a"', [
+    new Token("string", "a", stringSourceRange('"a"', 0, 3)),
+    endToken('"a"')
+]);
+
 function endToken(input) {
     var source = stringSourceRange(input, input.length, input.length);
     return new Token("end", null, source);
@@ -71,15 +76,19 @@ function tokenise(input) {
         },
         {
             name: "dot",
-            regex: /\./
+            regex: /(\.)/
         },
         {
             name: "colon1",
-            regex: /:/
+            regex: /(:)/
         },
         {
             name: "colon2",
-            regex: /:/
+            regex: /(:)/
+        },
+        {
+            name: "string",
+            regex: /"([a-z]*)"/
         }
     ];
     var tokeniser = new RegexTokeniser(rules);
