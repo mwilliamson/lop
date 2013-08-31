@@ -56,7 +56,56 @@ generated: if we try to parse the string `"if 1 42 else 12"`, we get the error:
 
 ## Tokens
 
-When using a parser built with lop, the input is an array of tokens. A token can be any value so long as it has the property `source`, which must be a `StringSourceRange`. For instance, to create a simple tokeniser that generates a stream of words tokens separated by whitespace tokens:
+When using a parser built with lop, the input is an array of tokens. A token can be any value so long as it has the property `source`, which must be a `StringSourceRange`.
+
+### Regex tokeniser
+
+The easiest way to create a tokeniser is using lop's regex tokeniser.
+A regex tokeniser can be constructed by calling `new lop.RegexTokeniser(rules)`,
+where `rules` is a list of token rules.
+A token rule should have a `name` property that uniquely identifies that rule,
+and a `regex` property that is an instance of `RegExp` describing the token.
+
+Calling `tokenise` with a string will return a list of tokens.
+Each token has three properties:
+
+* `type`
+* `value`
+* `source`
+
+The tokeniser will apply the regex from each rule in order at the current position.
+The current position is initially zero, the start of the string.
+The first rule with a matching regex is used to produce a token,
+with the token's `value` being the first capture of the regex,
+or `undefined` if the regex does not define any capture groups.
+The current position is incremented to the index of the first character unmatched by the regex.
+If no rule matches at the current position,
+a single character `unrecognisedCharacter` token is produced,
+and the current position is incremented by one.
+
+For instance, to create a simple tokeniser that generates a stream of words tokens separated by whitespace tokens.
+
+```javascript
+var lop = require("lop");
+
+var rules = [
+    {
+        name: "identifier",
+        regex: /(\s+)/
+    },
+    {
+        name: "whitespace",
+        regex: /(\S+)/
+    }
+];
+var tokeniser = new lop.RegexTokeniser(rules);
+tokeniser.tokenise(input);
+```
+
+### Custom tokenisers
+
+You can also create your own tokeniser.
+For instance, to create a simple tokeniser that generates a stream of words tokens separated by whitespace tokens:
 
 ```javascript
 var StringSource = require("lop").StringSource;
