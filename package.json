@@ -16,5 +16,5 @@
     "devDependencies": {
         "nodeunit": "~0.8.0"
     },
-    "license": "BSD"
+    "license": "BSD-2-Clause"
 }
