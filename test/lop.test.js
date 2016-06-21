@@ -1,7 +1,7 @@
 var lop = require("../");
 var Parser = lop.Parser;
 var rules = lop.rules;
-var testing = lop.testing;
+var testing = require("../lib/testing");
 var Tokeniser = require("./Tokeniser");
 
 exports.canParseUsingParser = function(test) {
