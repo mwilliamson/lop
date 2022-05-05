@@ -15,7 +15,8 @@
     "dependencies": {
         "duck": "^0.1.12",
         "option": "~0.2.1",
-        "underscore": "^1.13.1"
+        "underscore": "^1.13.1",
+        "util": "^0.12.4"
     },
     "devDependencies": {
         "nodeunit": "~0.8.0"
